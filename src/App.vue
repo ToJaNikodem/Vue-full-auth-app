@@ -4,6 +4,7 @@
         {{ isAuthenticated }}
         <span v-if="isAuthenticated">
             <button @click="logoutUser">Logout</button>
+            <router-link to="/user-delete">Delete account</router-link>
         </span>
         <span v-else>
             <router-link to="/login">Login</router-link>

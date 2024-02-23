@@ -3,6 +3,7 @@ import HomeView from '@/views/HomeView'
 import LoginView from '@/views/LoginView'
 import SignupView from '@/views/SignupView'
 import store from '@/store'
+import UserDeleteView from "@/views/UserDeleteView.vue";
 
 const routes = [
     {
@@ -19,6 +20,11 @@ const routes = [
         path: '/signup',
         name: 'signup',
         component: SignupView
+    },
+    {
+        path: '/user-delete',
+        name: 'user-delete',
+        component: UserDeleteView
     },
 ]
 
