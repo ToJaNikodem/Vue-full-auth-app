@@ -1,5 +1,3 @@
-// noinspection ExceptionCaughtLocallyJS,JSUnresolvedReference,JSUnusedLocalSymbols
-
 import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist'
 import {jwtDecode} from "jwt-decode"
@@ -91,13 +89,13 @@ const store = new Vuex.Store({
                         email: email,
                         password: password,
                     });
+                    
                     await router.push('/login')
                 } else {
                     throw new Error('Passwords do not match');
                 }
             } catch (error) {
-                console.error('Signup failed:', error);
-                throw error;
+                return error.response.data
             }
         },
         async refreshToken({commit}) {

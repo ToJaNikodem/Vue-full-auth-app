@@ -8,9 +8,11 @@
 
         <div>
             <label>Password</label>
-            <input type="password" name="password" v-model="password" minlength="12" maxlength="64" required>
+            <input type="password" name="password" v-model="password" minlength="10" maxlength="64" required>
         </div>
-
+        <div>
+            <span v-if="error">{{ error }}</span>
+        </div>
         <div>
             <button>Log in</button>
         </div>
@@ -25,7 +27,7 @@ export default {
         return {
             username: '',
             password: '',
-            errors: []
+            error: '',
         }
     },
     methods: {
@@ -38,7 +40,7 @@ export default {
                 });
 
             } catch (error) {
-                console.error('Login failed:', error);
+                this.error = 'Invalid username or password'
             }
         }
     }
