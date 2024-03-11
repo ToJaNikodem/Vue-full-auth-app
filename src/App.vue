@@ -1,14 +1,13 @@
 <template>
     <main>
-        <nav class=" bg-slate-400 w-full h-10 ">
-            <router-link to="/">Home</router-link>
-            {{ isAuthenticated }}
+        <nav class=" bg-slate-400 w-full h-12 text-black flex flex-row items-center">
+            <router-link class=" text-xl ml-10" to="/">Home</router-link>
             <span v-if="isAuthenticated">
-                <button @click="logoutUser">Logout</button>
-                <router-link to="/user-delete">Delete account</router-link>
+                <button class="text-xl ml-5" @click="logoutUser">Logout</button>
+                <router-link class="text-xl ml-5 text-red-600" to="/user-delete">Delete account</router-link>
             </span>
             <span v-else>
-                <router-link to="/login">Login</router-link>
+                <router-link class="text-xl ml-5" to="/login">Login</router-link>
             </span>
         </nav>
         <router-view />

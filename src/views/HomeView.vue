@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-gray-200">123</div>
+    <div> Welcome!</div>
 </template>
 
 <script>
@@ -9,7 +9,5 @@ export default {
 </script>
 
 <style scoped>
-@import '../assets/css/main.css';
-
 
 </style>
