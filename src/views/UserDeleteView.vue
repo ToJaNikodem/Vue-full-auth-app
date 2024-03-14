@@ -19,7 +19,6 @@
 import { mapActions } from "vuex";
 import store from "@/store";
 
-console.log(store.state.user.accessToken)
 export default {
     name: 'UserDeleteView',
     data() {

@@ -50,8 +50,6 @@ export default {
                     re_password: this.re_password,
                 });
                 this.error = response
-                console.log(this.error)
-                console.log(this.error['username'])
             } catch (error) {
                 console.error(error)
             }
