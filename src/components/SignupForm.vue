@@ -37,12 +37,16 @@ export default {
             password: '',
             re_password: '',
             error: '',
+            isLoading: false,
         }
     },
     methods: {
         ...mapActions(['signupUser']),
         async submitForm() {
             try {
+                this.isLoading = true
+                this.$emit('isLoadingChange', this.isLoading)
+
                 const response = await this.signupUser({
                     username: this.username,
                     email: this.email,
@@ -51,6 +55,8 @@ export default {
                 });
                 this.error = response
             } catch (error) {
+                this.isLoading = true
+                this.$emit('isLoadingChange', this.isLoading)
                 console.error(error)
             }
         }

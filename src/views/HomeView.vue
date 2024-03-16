@@ -1,5 +1,6 @@
 <template>
     <div> Welcome!</div>
+    <LoadingCircle></LoadingCircle>
 </template>
 
 <script>

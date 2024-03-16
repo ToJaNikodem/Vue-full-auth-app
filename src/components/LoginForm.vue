@@ -28,18 +28,24 @@ export default {
             username: '',
             password: '',
             error: '',
+            isLoading: false,
         }
     },
     methods: {
         ...mapActions(['loginUser']),
         async submitForm() {
             try {
+                this.isLoading = true
+                this.$emit('isLoadingChange', this.isLoading)
+
                 await this.loginUser({
                     username: this.username,
                     password: this.password
                 });
 
             } catch (error) {
+                this.isLoading = false
+                this.$emit('isLoadingChange', this.isLoading)
                 this.error = 'Invalid username or password'
             }
         }
