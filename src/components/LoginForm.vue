@@ -1,4 +1,3 @@
-<!--suppress ALL -->
 <template>
     <form @submit.prevent="submitForm">
         <div>
@@ -20,6 +19,7 @@
 </template>
 
 <script>
+import router from '@/router';
 import {mapActions} from 'vuex';
 
 export default {
@@ -35,18 +35,22 @@ export default {
         ...mapActions(['loginUser']),
         async submitForm() {
             try {
-                this.isLoading = true
+                this.isLoading = true 
                 this.$emit('isLoadingChange', this.isLoading)
 
-                await this.loginUser({
+                const response = await this.loginUser({
                     username: this.username,
                     password: this.password
-                });
-
+                })
+                if (response['status'] === 'success') {
+                    await router.push('/')
+                } else {
+                    this.isLoading = false 
+                    this.$emit('isLoadingChange', this.isLoading)
+                    this.error = response['message'] 
+                }
             } catch (error) {
-                this.isLoading = false
-                this.$emit('isLoadingChange', this.isLoading)
-                this.error = 'Invalid username or password'
+                this.error = 'An error occurred!'
             }
         }
     }

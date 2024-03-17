@@ -5,34 +5,39 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "axios";
 
 export default {
     data() {
         return {
-            text: 'Verifying email...'
+            text: "Verifying email...",
         };
     },
     mounted() {
         const { uid, token } = this.$route.params;
 
         if (uid && token) {
-            try {
-                const response = axios.post('/email_verification', {
+            axios
+                .post("/email_verification", {
                     user_id: uid,
                     token: token,
-                });
-                if (response) {
-                    this.text = 'Email verified, you can close this page! '
-                    console.log(response)
-                }
-            } catch (error) {
-                this.text = 'Invalid link!'
-                console.error(error)
-            }
+                })
+                .then((response) => {
+                    this.text = "Email verified, you can close this page!";
+                })
+                .catch((error) => {
+                    if (
+                        error.response &&
+                        (error.response.status === 400 || error.response.status === 404)
+                    ) {
+                        this.text = "Invalid link!";
+                    } else {
+                        this.text = "An error occurred!";
+                    }
+                })
         }
-    }
-}
+    },
+};
 </script>
 
 <style scoped></style>

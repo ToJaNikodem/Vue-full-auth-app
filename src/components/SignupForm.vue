@@ -52,12 +52,25 @@ export default {
                     email: this.email,
                     password: this.password,
                     re_password: this.re_password,
-                });
-                this.error = response
+                })
+                console.log(response)
+                if (response['status'] === 'success') {
+                    await router.push('/login')
+                } else {
+                    if (response['username']) {
+                        this.error += response['username']
+                    }
+                    if (response['email']) {
+                        this.error += response['email']
+                    }
+                    if (response['password']) {
+                        this.error += response['password']
+                    }
+                    this.isLoading = false 
+                    this.$emit('isLoadingChange', this.isLoading)
+                }
             } catch (error) {
-                this.isLoading = true
-                this.$emit('isLoadingChange', this.isLoading)
-                console.error(error)
+                this.error = 'An error occurred!'
             }
         }
     }
