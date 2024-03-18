@@ -3,14 +3,20 @@ import HomeView from '@/views/HomeView'
 import LoginView from '@/views/LoginView'
 import SignupView from '@/views/SignupView'
 import store from '@/store'
-import UserDeleteView from "@/views/UserDeleteView.vue"
-import EmailVerificationView from "@/views/EmailVerificationView.vue"
+import UserDeleteView from '@/views/UserDeleteView.vue'
+import EmailVerificationView from '@/views/EmailVerificationView.vue'
+import ProfileView from '@/views/ProfileView.vue'
 
 const routes = [
     {
         path: '/',
         name: 'home',
         component: HomeView
+    },
+    {
+        path: '/profile',
+        name: 'profile',
+        component: ProfileView
     },
     {
         path: '/login',

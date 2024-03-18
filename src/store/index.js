@@ -26,7 +26,7 @@ const store = new Vuex.Store({
     },
     mutations: {
         setUser(state, user) {
-            state.user = user;
+            state.user = user
         },
         clearUser(state) {
             state.user = {
@@ -35,11 +35,11 @@ const store = new Vuex.Store({
                 accessToken: '',
                 refreshToken: '',
                 isAuthenticated: false
-            };
+            }
         },
         setToken(state, { accessToken, refreshToken }) {
-            state.user.accessToken = accessToken;
-            state.user.refreshToken = refreshToken;
+            state.user.accessToken = accessToken
+            state.user.refreshToken = refreshToken
         }
     },
     actions: {
@@ -50,7 +50,7 @@ const store = new Vuex.Store({
                     password: password,
                 })
 
-                const userData = response.data;
+                const userData = response.data
                 const decodedToken = jwtDecode(userData.refresh)
 
                 commit('setUser', {
@@ -61,10 +61,10 @@ const store = new Vuex.Store({
                     isAuthenticated: true
                 })
 
-                return { 'status': 'success', 'message': 'User logged in successfully!' }
+                return { 'status': 'success' }
             } catch (error) {
                 if (error.response && error.response.status === 401) {
-                    return { 'status': 'error', 'message': 'Invalid username or password!' }
+                    return { 'status': 'error', 'username_or_email': 'invalid' }
                 } else {
                     return { 'status': 'error', 'message': 'An error occurred!' }
                 }
@@ -77,7 +77,7 @@ const store = new Vuex.Store({
                 })
 
             } catch (error) {
-                console.error('Full logout failed:', error);
+                console.error('Full logout failed:', error)
             }
             commit('clearUser')
             await router.push('/login')
@@ -90,15 +90,15 @@ const store = new Vuex.Store({
                         email: email,
                         password: password,
                     })
-                    return { 'status': 'success', 'message': 'Account created successfully!' }
+                    return { 'status': 'success' }
                 } else {
-                    return { 'status': 'error', 'message': 'Passwords do not match!' }
+                    return { 'status': 'error', 'password': 'no_match' }
                 }
             } catch (error) {
                 if (error.response && error.response.status === 400) {
                     return error.response.data
                 } else {
-                    return { status: 'error', message: 'An error occurred!' };
+                    return { status: 'error', message: 'An error occurred!' }
                 }
             }
         },
@@ -107,7 +107,7 @@ const store = new Vuex.Store({
                 const response = await axios.post('/token_refresh', {
                     refresh: this.state.user.refreshToken
                 })
-                const tokenData = response.data;
+                const tokenData = response.data
 
                 commit('setToken', {
                     accessToken: tokenData.access,
@@ -127,27 +127,12 @@ const store = new Vuex.Store({
                         'Authorization': 'Bearer ' + this.state.user.accessToken
                     }
                 })
-                return { status: 'success', message: 'User deleted successfully!' };
+                return { status: 'success' }
             } catch (error) {
-                if (error.response) {
-                    const status = error.response.status;
-                    let message;
-                    switch (status) {
-                        case 400:
-                            message = 'Invalid password!';
-                            break;
-                        case 401:
-                            message = 'Invalid token!';
-                            break;
-                        case 404:
-                            message = 'User does not exist!';
-                            break;
-                        default:
-                            message = 'An error occurred!';
-                    }
-                    return { status: 'error', message };
+                if (error.response.status === 400) {
+                    return { status: 'error', password: 'invalid'}
                 } else {
-                    return { status: 'error', message: 'An error occurred!' };
+                    return { status: 'error', message: 'An error occurred!' }
                 }
             }
         }
@@ -162,7 +147,7 @@ const refreshTokenInterval = setInterval(async () => {
     if (store.state.user.isAuthenticated) {
         await store.dispatch('refreshToken')
     }
-}, 4 * 60 * 1000);
+}, 4 * 60 * 1000)
 
 
 export default store

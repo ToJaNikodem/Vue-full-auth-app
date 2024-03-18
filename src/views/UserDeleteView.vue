@@ -6,15 +6,17 @@
                 <form @submit.prevent="submitForm">
                     <div>
                         <label>Password</label><br>
-                        <input class="rounded-md h-10 w-96 mb-5 text-black px-2" type="password" name="password"
+                        <input :class="{ 'border-red-600 border-4': password_error }"
+                            class="rounded-md h-10 w-96 mb-5 text-black px-2" type="password" name="password"
                             v-model="password" minlength="10" maxlength="64" required>
+                    </div>
+                    <div>
+                        <span v-if="error" class=" text-red-600 font-bold mt-2 block">{{ error }}</span>
                     </div>
                     <div>
                         <button class="rounded-md bg-gray-300 text-black w-24 h-10 mt-5 mb-5">Delete</button>
                     </div>
-                    <div>
-                        <span v-if="error">{{ error }}</span>
-                    </div>
+
                 </form>
             </span>
             <span v-show="isLoading">
@@ -37,6 +39,7 @@ export default {
         return {
             password: '',
             error: '',
+            password_error: false,
             isLoading: false,
         }
     },
@@ -47,14 +50,21 @@ export default {
         ...mapActions(['deleteUser', 'logoutUser']),
         async submitForm() {
             try {
+                this.error = ''
+                this.password_error = false
                 this.isLoading = true
                 const response = await this.deleteUser({ password: this.password })
 
                 if (response['status'] === 'success') {
                     await this.logoutUser()
                 } else {
+                    this.password_error = true
+                    if (response['password']){
+                        this.error = 'Invalid password!'
+                    } else {
+                        this.error = response['message']
+                    }
                     this.isLoading = false
-                    this.error = response['message'] 
                 }
             } catch (error) {
                 this.error = 'An error occurred!'

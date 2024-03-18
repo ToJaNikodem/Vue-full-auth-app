@@ -3,6 +3,7 @@
         <nav class=" bg-slate-400 w-full h-12 text-black flex flex-row items-center justify-between">
             <div>
                 <router-link class=" text-xl ml-10" to="/">Home</router-link>
+                <router-link v-if="isAuthenticated" class=" text-xl ml-10" to="/profile">Profile</router-link>
             </div>
             <div v-if="isAuthenticated">
                 <button class="text-md ml-5 text-white bg-blue-600 px-2 py-1 rounded-md font-bold"

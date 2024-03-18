@@ -5,7 +5,7 @@
             <span v-show="!isLoading">
                 <SignupForm @isLoadingChange="handleLoadingChange"></SignupForm>
                 <p>
-                    <router-link to="/login" class=" underline">Click here to log in!</router-link> 
+                    <router-link to="/login" class=" underline">Click here to log in!</router-link>
                 </p>
             </span>
             <span v-show="isLoading">
@@ -36,7 +36,7 @@ export default {
     methods: {
         handleLoadingChange(isLoading) {
             this.isLoading = isLoading;
-        }
+        },
     }
 }
 </script>
