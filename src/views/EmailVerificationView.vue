@@ -23,16 +23,17 @@ export default {
                     token: token,
                 })
                 .then((response) => {
-                    this.text = "Email verified, you can close this page!";
+                    this.$store.commit('verifyEmail')
+                    this.text = "Email verified, you can close this page!"
                 })
                 .catch((error) => {
                     if (
                         error.response &&
                         (error.response.status === 400 || error.response.status === 404)
                     ) {
-                        this.text = "Invalid link!";
+                        this.text = "Invalid link!"
                     } else {
-                        this.text = "An error occurred!";
+                        this.text = "An error occurred!"
                     }
                 })
         }

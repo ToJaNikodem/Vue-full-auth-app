@@ -19,9 +19,11 @@ const store = new Vuex.Store({
         user: {
             id: null,
             username: '',
+            nickname: '',
             accessToken: '',
             refreshToken: '',
-            isAuthenticated: false
+            isAuthenticated: false,
+            isEmailVerified: false,
         }
     },
     mutations: {
@@ -40,7 +42,10 @@ const store = new Vuex.Store({
         setToken(state, { accessToken, refreshToken }) {
             state.user.accessToken = accessToken
             state.user.refreshToken = refreshToken
-        }
+        },
+        verifyEmail(state) {
+            state.user.isEmailVerified = true
+        },
     },
     actions: {
         async loginUser({ commit }, { username, password }) {
@@ -56,9 +61,11 @@ const store = new Vuex.Store({
                 commit('setUser', {
                     id: decodedToken.user_id,
                     username: decodedToken.username,
+                    nickname: decodedToken.nickname,
                     accessToken: userData.access,
                     refreshToken: userData.refresh,
-                    isAuthenticated: true
+                    isAuthenticated: true,
+                    isEmailVerified: decodedToken.is_email_verified,
                 })
 
                 return { 'status': 'success' }
@@ -135,10 +142,30 @@ const store = new Vuex.Store({
                     return { status: 'error', message: 'An error occurred!' }
                 }
             }
+        },
+        async changeUsername({ commit }, { new_username }) {
+            try {
+                const response = await axios.post('/username_change', {
+                    username: this.state.user.username,
+                    new_username,
+                }, {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.state.user.accessToken
+                    }
+                })
+                this.state.user.nickname = new_username
+                return { status: 'success' }
+            } catch (error) {
+                return { status: 'error', message: 'An error occurred!' }
+            }
         }
     },
     getters: {
-        isAuthenticated: state => state.user.isAuthenticated
+        isAuthenticated: state => state.user.isAuthenticated,
+        isEmailVerified: state => state.user.isEmailVerified,
+        nickname: state => state.user.nickname,
+        username: state => state.user.username,
+        accessToken: state => state.user.accessToken,
     },
     plugins: [vuexCookie.plugin]
 })

@@ -6,6 +6,8 @@ import store from '@/store'
 import UserDeleteView from '@/views/UserDeleteView.vue'
 import EmailVerificationView from '@/views/EmailVerificationView.vue'
 import ProfileView from '@/views/ProfileView.vue'
+import ChangeUsernameView from '@/views/ChangeUsernameView.vue'
+import ChangePasswordView from '@/views/ChangePasswordView.vue'
 
 const routes = [
     {
@@ -29,16 +31,26 @@ const routes = [
         component: SignupView
     },
     {
-        path: '/user-delete',
-        name: 'user-delete',
+        path: '/delete-user',
+        name: 'delete-user',
         component: UserDeleteView
     },
     {
         path: '/verify/:uid/:token',
-        name: 'EmailVerification',
+        name: 'email-verification',
         component: EmailVerificationView,
-        props: true 
-      },
+        props: true
+    },
+    {
+        path: '/change-username',
+        name: 'change-username',
+        component: ChangeUsernameView,
+    },
+    {
+        path: '/change-password',
+        name: 'change-password',
+        component: ChangePasswordView,
+    }
 ]
 
 const router = createRouter({
