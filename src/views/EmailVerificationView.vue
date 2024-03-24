@@ -11,7 +11,7 @@ export default {
     data() {
         return {
             text: "Verifying email...",
-        };
+        }
     },
     mounted() {
         const { uid, token } = this.$route.params;
@@ -38,7 +38,7 @@ export default {
                 })
         }
     },
-};
+}
 </script>
 
 <style scoped></style>

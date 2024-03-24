@@ -12,6 +12,8 @@
         <router-link
             class="text-md ml-5 text-white bg-red-600 px-2 py-1 mt-5 rounded-md block font-bold w-64 text-center"
             to="/delete-user">Delete account</router-link>
+        <button class="text-md ml-5 text-white bg-violet-600 px-2 py-1 mt-5 rounded-md block font-bold w-64 text-center"
+            @click="testAccessToken">Test access token</button>
     </div>
 </template>
 
@@ -26,17 +28,37 @@ export default {
     },
     methods: {
         resendVerificationEmail() {
-            try {
-                const response = axios.post('/resend_verification_email', {
+            axios
+                .post('/resend_verification_email', {
                     username: this.username,
-                }, {
+                })
+                .then((response) => {
+
+                })
+                .catch((error) => {
+                    console.error('Verification email not send: ' + error)
+                })
+        },
+        testAccessToken() {
+            axios
+                .get("/token_test", {
                     headers: {
                         'Authorization': 'Bearer ' + this.accessToken
                     }
                 })
-            } catch (error) {
-                console.error('Verification email not send: ' + error)
-            }
+                .then((response) => {
+                    console.log('Access token valid!')
+                })
+                .catch((error) => {
+                    if (
+                        error.response &&
+                        (error.response.status === 401)
+                    ) {
+                        this.text = "Invalid access token!"
+                    } else {
+                        this.text = "An error occurred!"
+                    }
+                })
         }
     }
 }

@@ -120,8 +120,10 @@ const store = new Vuex.Store({
                     accessToken: tokenData.access,
                     refreshToken: tokenData.refresh,
                 })
+                return true
             } catch (error) {
                 console.error('Refresh failed:', error)
+                return false
             }
         },
         async deleteUser({ dispatch }, { password }) {
@@ -137,7 +139,7 @@ const store = new Vuex.Store({
                 return { status: 'success' }
             } catch (error) {
                 if (error.response.status === 400) {
-                    return { status: 'error', password: 'invalid'}
+                    return { status: 'error', password: 'invalid' }
                 } else {
                     return { status: 'error', message: 'An error occurred!' }
                 }
@@ -158,6 +160,22 @@ const store = new Vuex.Store({
             } catch (error) {
                 return { status: 'error', message: 'An error occurred!' }
             }
+        },
+        async changePassword({ }, { password, new_password }) {
+            try {
+                const response = await axios.post('/password_change', {
+                    username: this.state.user.username,
+                    password,
+                    new_password,
+                }, {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.state.user.accessToken
+                    }
+                })
+                return { status: 'success' }
+            } catch (error) {
+                return { status: 'error', message: 'An error occurred!' }
+            }
         }
     },
     getters: {
@@ -170,11 +188,11 @@ const store = new Vuex.Store({
     plugins: [vuexCookie.plugin]
 })
 
-const refreshTokenInterval = setInterval(async () => {
-    if (store.state.user.isAuthenticated) {
-        await store.dispatch('refreshToken')
-    }
-}, 4 * 60 * 1000)
+// const refreshTokenInterval = setInterval(async () => {
+//     if (store.state.user.isAuthenticated) {
+//         await store.dispatch('refreshToken')
+//     }
+// }, 4 * 60 * 1000)
 
 
 export default store

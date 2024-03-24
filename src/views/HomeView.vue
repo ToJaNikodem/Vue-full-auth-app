@@ -1,5 +1,5 @@
 <template>
-    <div> Welcome {{ nickname }}!</div>
+    <div class=" m-6 text-5xl"> Welcome {{ nickname }}!</div>
     <LoadingCircle></LoadingCircle>
 </template>
 

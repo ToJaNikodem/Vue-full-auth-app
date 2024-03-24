@@ -10,7 +10,8 @@
                     @click="logoutUser">Logout</button>
             </div>
             <div v-else>
-                <router-link class="text-md ml-5 text-white bg-blue-600 px-2 py-1 mr-5 rounded-md font-bold" to="/login">Login</router-link>
+                <router-link class="text-md ml-5 text-white bg-blue-600 px-2 py-1 mr-5 rounded-md font-bold"
+                    to="/login">Login</router-link>
             </div>
         </nav>
         <router-view />
@@ -25,8 +26,22 @@ export default {
         ...mapGetters(['isAuthenticated'])
     },
     methods: {
-        ...mapActions(['logoutUser']),
+        ...mapActions(['logoutUser', 'refreshToken']),
     },
+    mounted() {
+        try {
+            if (this.refreshToken()) {
+                this.refrestTokenInterval = setInterval(this.refreshToken, 4 * 60 * 1000)
+            } else {
+                throw error
+            }
+        } catch {
+            console.error('Token refresh error!')
+        }
+    },
+    beforeDestroy() {
+        clearInterval(this.refreshTokenInterval)
+    }
 }
 </script>
 
