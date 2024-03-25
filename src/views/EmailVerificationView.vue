@@ -14,7 +14,7 @@ export default {
         }
     },
     mounted() {
-        const { uid, token } = this.$route.params;
+        const { uid, token } = this.$route.params
 
         if (uid && token) {
             axios

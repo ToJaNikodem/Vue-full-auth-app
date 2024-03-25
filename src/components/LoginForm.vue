@@ -12,6 +12,7 @@
             <input :class="{ 'border-red-600 border-4': username_or_email_error }"
                 class=" rounded-md h-10 w-96 text-black px-2" type="password" name="password" v-model="password"
                 minlength="10" maxlength="64" required>
+            <span class=" block text-sm pt-1 text-violet-300"><router-link to="/reset-password">Forgot password?</router-link></span>
         </div>
         <div>
             <span v-if="error" class=" text-red-600 font-bold mt-2 block">{{ error }}</span>

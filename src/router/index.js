@@ -8,6 +8,8 @@ import EmailVerificationView from '@/views/EmailVerificationView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 import ChangeUsernameView from '@/views/ChangeUsernameView.vue'
 import ChangePasswordView from '@/views/ChangePasswordView.vue'
+import ResetPasswordView from '@/views/SendResetPasswordView.vue'
+import PasswordResetView from '@/views/PasswordResetView.vue'
 
 const routes = [
     {
@@ -42,6 +44,12 @@ const routes = [
         props: true
     },
     {
+        path: '/password-reset/:uid/:token',
+        name: 'password-reset',
+        component: PasswordResetView,
+        props: true
+    },
+    {
         path: '/change-username',
         name: 'change-username',
         component: ChangeUsernameView,
@@ -50,6 +58,11 @@ const routes = [
         path: '/change-password',
         name: 'change-password',
         component: ChangePasswordView,
+    },
+    {
+        path: '/reset-password',
+        name: 'reset-password',
+        component: ResetPasswordView,
     }
 ]
 

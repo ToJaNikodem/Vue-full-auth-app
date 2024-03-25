@@ -188,11 +188,4 @@ const store = new Vuex.Store({
     plugins: [vuexCookie.plugin]
 })
 
-// const refreshTokenInterval = setInterval(async () => {
-//     if (store.state.user.isAuthenticated) {
-//         await store.dispatch('refreshToken')
-//     }
-// }, 4 * 60 * 1000)
-
-
 export default store
