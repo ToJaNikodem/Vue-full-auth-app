@@ -20,6 +20,18 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { startRefreshTokenInterval, stopRefreshTokenInterval } from '@/store/index'
+
+async function tryRefreshToken(isAuthenticated, refreshToken) {
+    try {
+        if (isAuthenticated) {
+            await refreshToken()
+            startRefreshTokenInterval()
+        }
+    } catch (error) {
+         console.error('Token refresh error!', error.message); 
+    }
+}
 
 export default {
     computed: {
@@ -29,18 +41,10 @@ export default {
         ...mapActions(['logoutUser', 'refreshToken']),
     },
     mounted() {
-        try {
-            if (this.refreshToken()) {
-                this.refrestTokenInterval = setInterval(this.refreshToken, 4 * 60 * 1000)
-            } else {
-                throw error
-            }
-        } catch {
-            console.error('Token refresh error!')
-        }
+        tryRefreshToken(this.isAuthenticated, this.refreshToken)
     },
     beforeDestroy() {
-        clearInterval(this.refreshTokenInterval)
+        stopRefreshTokenInterval()
     }
 }
 </script>

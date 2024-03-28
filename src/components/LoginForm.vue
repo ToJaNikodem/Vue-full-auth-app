@@ -1,76 +1,75 @@
 <template>
     <form @submit.prevent="submitForm">
-        <div>
-            <label>Username or email</label><br>
-            <input v-on:input="makeLowercase" :class="{ 'border-red-600 border-4': username_or_email_error }"
-                class=" rounded-md h-10 w-96 mb-5 text-black px-2" type="text" name="username" v-model="username"
-                minlength="4" maxlength="254" required>
-        </div>
+        <CustomInput label="Username or email" type="username_or_email" dataType="username_or_email"
+            :form-data="formData" :errors="errors">
+        </CustomInput>
+
+        <CustomInput label="Password" type="login_password" dataType="password" :form-data="formData" :errors="errors">
+        </CustomInput>
 
         <div>
-            <label>Password</label><br>
-            <input :class="{ 'border-red-600 border-4': username_or_email_error }"
-                class=" rounded-md h-10 w-96 text-black px-2" type="password" name="password" v-model="password"
-                minlength="10" maxlength="64" required>
-            <span class=" block text-sm pt-1 text-violet-300"><router-link to="/reset-password">Forgot password?</router-link></span>
-        </div>
-        <div>
-            <span v-if="error" class=" text-red-600 font-bold mt-2 block">{{ error }}</span>
+            <span v-if="errorMessage" class=" text-red-600 font-bold mt-2 block">{{ errorMessage }}</span>
         </div>
         <div>
             <button class=" rounded-md bg-gray-300 text-black w-24 h-10 mt-5 mb-5">Log in</button>
         </div>
     </form>
+    <p>
+        <router-link to="/signup" class=" underline">Click here to sign up!</router-link>
+    </p>
 </template>
 
 <script>
-import router from '@/router';
-import { mapActions } from 'vuex';
+import router from '@/router'
+import { mapActions } from 'vuex'
+import CustomInput from './CustomInput.vue'
 
 export default {
     data() {
         return {
-            username: '',
-            password: '',
-            error: '',
-            username_or_email_error: false,
+            errorMessage: '',
+            errors: false,
             isLoading: false,
+            formData: new FormData(),
         }
+    },
+    components: {
+        CustomInput,
     },
     methods: {
         ...mapActions(['loginUser']),
         async submitForm() {
             try {
-                this.error = ''
+                this.errorMessage = ''
                 this.isLoading = true
-                this.username_error = false
-                this.email_error = false
-                this.password_error = false
+                this.errors = false
                 this.$emit('isLoadingChange', this.isLoading)
 
+                const myFormData = new FormData()
+
+                this.formData.forEach((value, key) => {
+                    myFormData.append(key, value)
+                })
+
                 const response = await this.loginUser({
-                    username: this.username,
-                    password: this.password
+                    username: myFormData.get('username_or_email'),
+                    password: myFormData.get('login_password'),
                 })
                 if (response['status'] === 'success') {
                     await router.push('/')
                 } else {
                     if (response['username_or_email'] == 'invalid') {
-                        this.error += 'Invalid username or password!'
-                        this.username_or_email_error = true
+                        this.errorMessage += "Invalid username or password!"
+                        this.errors = true
                     } else {
-                        this.error += response['message']
+                        this.errorMessage += response['message']
                     }
                     this.isLoading = false
                     this.$emit('isLoadingChange', this.isLoading)
                 }
             } catch (error) {
-                this.error = 'An error occurred!'
+                this.errorMessage = "An error occurred!"
             }
-        },
-        makeLowercase(event) {
-            console
-            this.username = event.target.value.toLowerCase();
         },
     }
 }

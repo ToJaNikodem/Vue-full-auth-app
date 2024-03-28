@@ -4,17 +4,15 @@
             <h1 class="text-4xl block mt-5 mb-5">Reset password</h1>
             <span v-show="!isLoading">
                 <form @submit.prevent="submitForm">
+                    <CustomInput label="Email" type="email" dataType="email" :form-data="formData"
+                        :errors="email_error">
+                    </CustomInput>
                     <div>
-                        <label>Email</label><br>
-                        <input :class="{ 'border-red-600 border-4': email_error }"
-                            class="rounded-md h-10 w-96 mb-5 text-black px-2" type="email" name="password"
-                            v-model="email" minlength="4" maxlength="254" required>
+                        <span v-if="errorMessages" class=" text-red-600 font-bold mt-2 block">{{ errorMessages }}</span>
                     </div>
                     <div>
-                        <span v-if="error" class=" text-red-600 font-bold mt-2 block">{{ error }}</span>
-                    </div>
-                    <div>
-                        <button class="rounded-md bg-gray-300 text-black w-64 h-10 mt-5 mb-5">Send password reset email</button>
+                        <button class="rounded-md bg-gray-300 text-black w-64 h-10 mt-5 mb-5">Send password reset
+                            email</button>
                     </div>
 
                 </form>
@@ -33,33 +31,43 @@
 import LoadingCircle from '@/components/LoadingCircle.vue'
 import axios from 'axios'
 import router from '@/router'
+import CustomInput from '@/components/CustomInput.vue'
 
 export default {
     name: 'ResetPasswordView',
     data() {
         return {
-            email: '',
-            error: '',
-            email_error: false,
+            errorMessages: '',
+            errors: false,
             isLoading: false,
+            formData: new FormData(),
         }
     },
     components: {
         LoadingCircle,
+        CustomInput,
     },
     methods: {
         async submitForm() {
             try {
-                this.error = ''
-                this.email_error = false
+                this.errorMessages = ''
+                this.errors = false
                 this.isLoading = true
-                const response = await axios.post('/send_password_reset_email', {
-                    email: this.email,
+
+                const myFormData = new FormData()
+
+                this.formData.forEach((value, key) => {
+                    myFormData.append(key, value)
                 })
+
+                await axios.post('/send_password_reset_email', {
+                    email: myFormData.get('email'),
+                })
+
                 router.push('login')
             } catch (error) {
                 this.isLoading = false
-                this.error = 'An error occurred!'
+                this.errorMessages = "An error occurred!"
             }
         }
     }

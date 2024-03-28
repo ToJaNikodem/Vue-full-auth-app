@@ -4,14 +4,11 @@
             <h1 class="text-4xl block mt-5 mb-5">Delete account</h1>
             <span v-show="!isLoading">
                 <form @submit.prevent="submitForm">
+                    <CustomInput label="Password" type="password" dataType="password" :form-data="formData"
+                        :errors="errors">
+                    </CustomInput>
                     <div>
-                        <label>Password</label><br>
-                        <input :class="{ 'border-red-600 border-4': password_error }"
-                            class="rounded-md h-10 w-96 mb-5 text-black px-2" type="password" name="password"
-                            v-model="password" minlength="10" maxlength="64" required>
-                    </div>
-                    <div>
-                        <span v-if="error" class=" text-red-600 font-bold mt-2 block">{{ error }}</span>
+                        <span v-if="errorMessages" class=" text-red-600 font-bold mt-2 block">{{ errorMessages }}</span>
                     </div>
                     <div>
                         <button class="rounded-md bg-gray-300 text-black w-24 h-10 mt-5 mb-5">Delete</button>
@@ -30,48 +27,55 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions } from 'vuex'
 import LoadingCircle from '@/components/LoadingCircle.vue'
+import CustomInput from '@/components/CustomInput.vue'
 
 export default {
     name: 'UserDeleteView',
     data() {
         return {
-            password: '',
-            error: '',
-            password_error: false,
+            errorMessages: '',
+            errors: false,
             isLoading: false,
+            formData: new FormData(),
         }
     },
     components: {
         LoadingCircle,
+        CustomInput,
     },
     methods: {
         ...mapActions(['deleteUser', 'logoutUser']),
         async submitForm() {
             try {
-                this.error = ''
-                this.password_error = false
+                this.errorMessages = ''
+                this.errors = false
                 this.isLoading = true
-                const response = await this.deleteUser({ password: this.password })
+
+                const myFormData = new FormData()
+
+                this.formData.forEach((value, key) => {
+                    myFormData.append(key, value)
+                })
+
+                const response = await this.deleteUser({ password: myFormData.get('password') })
 
                 if (response['status'] === 'success') {
                     await this.logoutUser()
                 } else {
-                    this.password_error = true
-                    if (response['password']){
-                        this.error = 'Invalid password!'
+                    this.errors = true
+                    if (response['password']) {
+                        this.errorMessages = "Invalid password!"
                     } else {
-                        this.error = response['message']
+                        this.errorMessages = response['message']
                     }
                     this.isLoading = false
                 }
             } catch (error) {
-                this.error = 'An error occurred!'
+                this.errorMessages = "An error occurred!"
             }
         }
     }
 }
 </script>
-
-<style scoped></style>

@@ -27,38 +27,38 @@ export default {
         ...mapGetters(['isEmailVerified', 'username', 'accessToken'])
     },
     methods: {
-        resendVerificationEmail() {
-            axios
-                .post('/resend_verification_email', {
+        async resendVerificationEmail() {
+            try {
+                await axios.post('/resend_verification_email', {
                     username: this.username,
-                })
-                .then((response) => {
-
-                })
-                .catch((error) => {
-                    console.error('Verification email not send: ' + error)
-                })
-        },
-        testAccessToken() {
-            axios
-                .get("/token_test", {
+                }, {
                     headers: {
                         'Authorization': 'Bearer ' + this.accessToken
                     }
                 })
-                .then((response) => {
-                    console.log('Access token valid!')
-                })
-                .catch((error) => {
-                    if (
-                        error.response &&
-                        (error.response.status === 401)
-                    ) {
-                        this.text = "Invalid access token!"
-                    } else {
-                        this.text = "An error occurred!"
+
+                console.log("Verification email sent!")
+            } catch (error) {
+                console.error("Verification email not sent: ", error)
+            }
+        },
+
+        async testAccessToken() {
+            try {
+                await axios.get("/token_test", {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.accessToken
                     }
                 })
+
+                console.log("Access token valid!")
+            } catch (error) {
+                if (error.response && error.response.status === 401) {
+                    this.text = "Invalid access token!"
+                } else {
+                    this.text = "An error occurred!"
+                }
+            }
         }
     }
 }

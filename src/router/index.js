@@ -1,53 +1,53 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/HomeView'
-import LoginView from '@/views/LoginView'
-import SignupView from '@/views/SignupView'
 import store from '@/store'
-import UserDeleteView from '@/views/UserDeleteView.vue'
-import EmailVerificationView from '@/views/EmailVerificationView.vue'
-import ProfileView from '@/views/ProfileView.vue'
-import ChangeUsernameView from '@/views/ChangeUsernameView.vue'
-import ChangePasswordView from '@/views/ChangePasswordView.vue'
-import ResetPasswordView from '@/views/SendResetPasswordView.vue'
-import PasswordResetView from '@/views/PasswordResetView.vue'
+import HomeView from '@/views/HomeView'
+import LoginView from '@/views/authentication/LoginView'
+import SignupView from '@/views/authentication/SignupView'
+import UserDeleteView from '@/views/profile/UserDeleteView.vue'
+import EmailVerificationView from '@/views/authentication/EmailVerificationView.vue'
+import ProfileView from '@/views/profile/ProfileView.vue'
+import ChangeUsernameView from '@/views/profile/ChangeUsernameView.vue'
+import ChangePasswordView from '@/views/profile/ChangePasswordView.vue'
+import ResetPasswordView from '@/views/authentication/SendResetPasswordView.vue'
+import PasswordResetView from '@/views/authentication/PasswordResetView.vue'
 
 const routes = [
     {
         path: '/',
         name: 'home',
-        component: HomeView
+        component: HomeView,
     },
     {
         path: '/profile',
         name: 'profile',
-        component: ProfileView
+        component: ProfileView,
     },
     {
         path: '/login',
         name: 'login',
-        component: LoginView
+        component: LoginView,
     },
     {
         path: '/signup',
         name: 'signup',
-        component: SignupView
+        component: SignupView,
     },
     {
         path: '/delete-user',
         name: 'delete-user',
-        component: UserDeleteView
+        component: UserDeleteView,
     },
     {
         path: '/verify/:uid/:token',
         name: 'email-verification',
         component: EmailVerificationView,
-        props: true
+        props: true,
     },
     {
         path: '/password-reset/:uid/:token',
         name: 'password-reset',
         component: PasswordResetView,
-        props: true
+        props: true,
     },
     {
         path: '/change-username',
@@ -63,7 +63,7 @@ const routes = [
         path: '/reset-password',
         name: 'reset-password',
         component: ResetPasswordView,
-    }
+    },
 ]
 
 const router = createRouter({

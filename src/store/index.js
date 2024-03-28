@@ -5,6 +5,26 @@ import axios from 'axios'
 import router from '@/router'
 import Cookies from 'js-cookie'
 
+axios.interceptors.response.use(function (response) {
+    // Do something with response data
+    console.log('Response Interceptor:', response);
+    return response;
+}, function (error) {
+    // Do something with response error
+    console.error('Response Interceptor Error:', error);
+    return Promise.reject(error);
+});
+
+axios.interceptors.request.use(function (config) {
+    // Do something before request is sent
+    console.log('Request Interceptor:', config);
+    return config;
+}, function (error) {
+    // Do something with request error
+    console.error('Request Interceptor Error:', error);
+    return Promise.reject(error);
+});
+
 const vuexCookie = new VuexPersistence({
     restoreState: (key, storage) => Cookies.getJSON(key),
     saveState: (key, state, storage) =>
@@ -67,7 +87,7 @@ const store = new Vuex.Store({
                     isAuthenticated: true,
                     isEmailVerified: decodedToken.is_email_verified,
                 })
-
+                startRefreshTokenInterval()
                 return { 'status': 'success' }
             } catch (error) {
                 if (error.response && error.response.status === 401) {
@@ -82,17 +102,17 @@ const store = new Vuex.Store({
                 await axios.post('/logout', {
                     refresh: this.state.user.refreshToken
                 })
-
+                stopRefreshTokenInterval()
             } catch (error) {
-                console.error('Full logout failed:', error)
+                console.error('Full logout failed!')
             }
             commit('clearUser')
             await router.push('/login')
         },
-        async signupUser({ commit }, { username, email, password, re_password }) {
+        async signupUser({ }, { username, email, password, re_password }) {
             try {
                 if (password === re_password) {
-                    const response = await axios.post('/signup', {
+                    await axios.post('/signup', {
                         username: username,
                         email: email,
                         password: password,
@@ -109,7 +129,7 @@ const store = new Vuex.Store({
                 }
             }
         },
-        async refreshToken({ commit }) {
+        async refreshToken({ commit, dispatch }) {
             try {
                 const response = await axios.post('/token_refresh', {
                     refresh: this.state.user.refreshToken
@@ -122,13 +142,13 @@ const store = new Vuex.Store({
                 })
                 return true
             } catch (error) {
-                console.error('Refresh failed:', error)
+                dispatch('logoutUser')
                 return false
             }
         },
-        async deleteUser({ dispatch }, { password }) {
+        async deleteUser({ }, { password }) {
             try {
-                const response = await axios.post('/user_delete', {
+                await axios.post('/user_delete', {
                     username: this.state.user.username,
                     password,
                 }, {
@@ -145,27 +165,27 @@ const store = new Vuex.Store({
                 }
             }
         },
-        async changeUsername({ commit }, { new_username }) {
+        async changeUsername({ }, { new_nickname }) {
             try {
-                const response = await axios.post('/username_change', {
+                await axios.post('/nickname_change', {
                     username: this.state.user.username,
-                    new_username,
+                    new_nickname,
                 }, {
                     headers: {
                         'Authorization': 'Bearer ' + this.state.user.accessToken
                     }
                 })
-                this.state.user.nickname = new_username
+                this.state.user.nickname = new_nickname
                 return { status: 'success' }
             } catch (error) {
                 return { status: 'error', message: 'An error occurred!' }
             }
         },
-        async changePassword({ }, { password, new_password }) {
+        async changePassword({ }, { old_password, new_password }) {
             try {
-                const response = await axios.post('/password_change', {
+                await axios.post('/password_change', {
                     username: this.state.user.username,
-                    password,
+                    old_password,
                     new_password,
                 }, {
                     headers: {
@@ -187,5 +207,17 @@ const store = new Vuex.Store({
     },
     plugins: [vuexCookie.plugin]
 })
+
+let refreshTokenInterval
+
+export function startRefreshTokenInterval() {
+    refreshTokenInterval = setInterval(() => {
+        store.dispatch('refreshToken')
+    }, 4 * 60 * 1000)
+}
+
+export function stopRefreshTokenInterval() {
+    clearInterval(refreshTokenInterval)
+}
 
 export default store

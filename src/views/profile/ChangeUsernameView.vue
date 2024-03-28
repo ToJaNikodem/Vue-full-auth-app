@@ -4,14 +4,11 @@
             <h1 class="text-4xl block mt-5 mb-5">Change username</h1>
             <span v-show="!isLoading">
                 <form @submit.prevent="submitForm">
+                    <CustomInput label="New username" type="username" dataType="username" :form-data="formData"
+                        :errors="errors">
+                    </CustomInput>
                     <div>
-                        <label>New username</label><br>
-                        <input :class="{ 'border-red-600 border-4': username_error }"
-                            class="rounded-md h-10 w-96 mb-5 text-black px-2" type="text" name="new-username"
-                            v-model="new_username" minlength="4" maxlength="40" required>
-                    </div>
-                    <div>
-                        <span v-if="error" class=" text-red-600 font-bold mt-2 block">{{ error }}</span>
+                        <span v-if="errorMessage" class=" text-red-600 font-bold mt-2 block">{{ errors }}</span>
                     </div>
                     <div>
                         <button class="rounded-md bg-gray-300 text-black w-48 h-10 mt-5 mb-5">Change username</button>
@@ -33,38 +30,45 @@
 import LoadingCircle from '@/components/LoadingCircle.vue'
 import { mapActions } from 'vuex'
 import router from '@/router'
+import CustomInput from '@/components/CustomInput.vue'
 
 export default {
     name: 'ChangeUsernameView',
     data() {
         return {
-            new_username: '',
-            error: '',
-            username_error: false,
+            errorMessage: '',
+            errors: false,
             isLoading: false,
+            formData: new FormData(),
         }
     },
     components: {
         LoadingCircle,
+        CustomInput,
     },
     methods: {
         ...mapActions(['changeUsername']),
         async submitForm() {
             try {
-                this.error = ''
+                this.errorMessage = ''
                 this.username_error = false
                 this.isLoading = true
 
-                const response = await this.changeUsername({ new_username: this.new_username })
+                const myFormData = new FormData()
+
+                this.formData.forEach((value, key) => {
+                    myFormData.append(key, value)
+                })
+
+                const response = await this.changeUsername({ new_nickname: myFormData.get('username') })
                 if (response['status'] == 'success') {
                     await router.push('profile')
                 } else {
-                    console.error('prp')
                     this.isLoading = false
                 }
-                
+
             } catch (error) {
-                this.error = 'An error occurred!'
+                this.errorMessage = "An error occurred!"
             }
         }
     }

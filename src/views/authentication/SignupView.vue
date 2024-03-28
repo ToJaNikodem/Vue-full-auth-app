@@ -4,9 +4,6 @@
             <h1 class=" text-4xl block mt-5 mb-5">Sign up</h1>
             <span v-show="!isLoading">
                 <SignupForm @isLoadingChange="handleLoadingChange"></SignupForm>
-                <p>
-                    <router-link to="/login" class=" underline">Click here to log in!</router-link>
-                </p>
             </span>
             <span v-show="isLoading">
                 <div class=" flex flex-col w-full justify-center items-center">
@@ -23,19 +20,19 @@ import SignupForm from '@/components/SignupForm.vue'
 import LoadingCircle from '@/components/LoadingCircle.vue'
 
 export default {
+    name: 'SignupView',
     data() {
         return {
             isLoading: false,
         }
     },
-    name: 'SignupView',
     components: {
         SignupForm,
         LoadingCircle,
     },
     methods: {
         handleLoadingChange(isLoading) {
-            this.isLoading = isLoading;
+            this.isLoading = isLoading
         },
     }
 }
