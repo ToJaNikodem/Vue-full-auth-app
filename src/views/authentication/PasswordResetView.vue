@@ -4,12 +4,8 @@
             <h1 class="text-4xl block mt-5 mb-5">Set new password</h1>
             <span v-show="!isLoading">
                 <form @submit.prevent="submitForm">
-                    <CustomInput label="New password" type="new_password" dataType="password" :form-data="formData"
-                        :errors="errors">
-                    </CustomInput>
-                    <CustomInput label="Confirm new password" type="re_new_password" dataType="password" :form-data="formData"
-                        :errors="errors">
-                    </CustomInput>
+                    <PasswordInput name="new_password" label="New password" type="none" :form-data="formData" :errors="errors"></PasswordInput>
+                    <PasswordInput name="re_new_password" label="Confirm new password" type="none" :form-data="formData" :errors="errors"></PasswordInput>
                     <div>
                         <span v-if="errorMessages" class=" text-red-600 font-bold mt-2 block">{{ errorMessages }}</span>
                     </div>
@@ -33,7 +29,7 @@
 import LoadingCircle from '@/components/LoadingCircle.vue'
 import axios from 'axios'
 import router from '@/router'
-import CustomInput from '@/components/CustomInput.vue'
+import PasswordInput from '@/components/inputs/PasswordInput.vue'
 
 export default {
     name: 'PasswordResetView',
@@ -47,7 +43,7 @@ export default {
     },
     components: {
         LoadingCircle,
-        CustomInput,
+        PasswordInput,
     },
     methods: {
         async submitForm() {
@@ -66,7 +62,7 @@ export default {
 
                 if (myFormData.get('new_password') === myFormData.get('re_new_password')) {
                     await axios.post('/password_reset', {
-                        user_id: uid,
+                        encoded_user_id: uid,
                         token: token,
                         new_password: myFormData.get('new_password'),
                     })

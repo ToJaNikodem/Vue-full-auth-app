@@ -4,9 +4,7 @@
             <h1 class="text-4xl block mt-5 mb-5">Change username</h1>
             <span v-show="!isLoading">
                 <form @submit.prevent="submitForm">
-                    <CustomInput label="New username" type="username" dataType="username" :form-data="formData"
-                        :errors="errors">
-                    </CustomInput>
+                    <UsernameEmailInput name="new_nickname" label="New nickname" type="username" :form-data="formData" :errors="errors"></UsernameEmailInput>
                     <div>
                         <span v-if="errorMessage" class=" text-red-600 font-bold mt-2 block">{{ errors }}</span>
                     </div>
@@ -30,7 +28,7 @@
 import LoadingCircle from '@/components/LoadingCircle.vue'
 import { mapActions } from 'vuex'
 import router from '@/router'
-import CustomInput from '@/components/CustomInput.vue'
+import UsernameEmailInput from '@/components/inputs/UsernameEmailInput.vue'
 
 export default {
     name: 'ChangeUsernameView',
@@ -44,7 +42,7 @@ export default {
     },
     components: {
         LoadingCircle,
-        CustomInput,
+        UsernameEmailInput,
     },
     methods: {
         ...mapActions(['changeUsername']),
@@ -60,9 +58,9 @@ export default {
                     myFormData.append(key, value)
                 })
 
-                const response = await this.changeUsername({ new_nickname: myFormData.get('username') })
+                const response = await this.changeUsername({ new_nickname: myFormData.get('new_nickname') })
                 if (response['status'] == 'success') {
-                    await router.push('profile')
+                    await router.push({ name: 'profile', query: { usernameChangeSuccess: true } })
                 } else {
                     this.isLoading = false
                 }

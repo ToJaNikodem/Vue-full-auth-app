@@ -4,13 +4,8 @@
             <h1 class="text-4xl block mt-5 mb-5">Change password</h1>
             <span v-show="!isLoading">
                 <form @submit.prevent="submitForm">
-                    <CustomInput label="Password" type="old_password" dataType="password" :form-data="formData"
-                        :errors="old_password_error">
-                    </CustomInput>
-                    <CustomInput label="New password" type="new_password" dataType="password" :form-data="formData"
-                        :errors="new_password_error">
-                    </CustomInput>
-
+                    <PasswordInput name="old_password" label="Old password" type="none" :form-data="formData" :errors="old_password_error"></PasswordInput>
+                    <PasswordInput name="new_password" label="New password" type="none" :form-data="formData" :errors="new_password_error"></PasswordInput>
                     <div>
                         <span v-if="errorMessages" class=" text-red-600 font-bold mt-2 block">{{ errorMessages }}</span>
                     </div>
@@ -34,7 +29,7 @@
 import LoadingCircle from '@/components/LoadingCircle.vue'
 import { mapActions } from 'vuex'
 import router from '@/router'
-import CustomInput from '@/components/CustomInput.vue'
+import PasswordInput from '@/components/inputs/PasswordInput.vue'
 
 export default {
     name: 'ChangePasswordView',
@@ -49,7 +44,7 @@ export default {
     },
     components: {
         LoadingCircle,
-        CustomInput,
+        PasswordInput,
     },
     methods: {
         ...mapActions(['changePassword']),
@@ -68,7 +63,7 @@ export default {
 
                 const response = await this.changePassword({ old_password: myFormData.get('old_password'), new_password: myFormData.get('new_password') })
                 if (response['status'] == 'success') {
-                    await router.push('profile')
+                    await router.push({ name: 'profile', query: { passwordChangeSuccess: true } })
                 } else {
                     this.isLoading = false
                 }

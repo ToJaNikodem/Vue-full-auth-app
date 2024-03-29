@@ -2,6 +2,9 @@
     <div class="flex items-center justify-center w-full h-full">
         <div class=" flex flex-col w-1/2 h-1/2 text-center">
             <h1 class=" text-4xl block mt-5 mb-5">Log in</h1>
+            <div v-if="messages" class=" bg-green-500 w-64 m-auto p-2 rounded-md" >
+                {{ messages }}
+            </div>
             <span v-show="!isLoading">
                 <LoginForm @isLoadingChange="handleLoadingChange"></LoginForm>
             </span>
@@ -23,6 +26,7 @@ export default {
     data() {
         return {
             isLoading: false,
+            messages: '',
         }
     },
     name: 'LoginView',
@@ -34,7 +38,11 @@ export default {
         handleLoadingChange(isLoading) {
             this.isLoading = isLoading;
         }
+    },
+    mounted() {
+        if (this.$route.query.loginSuccess) {
+            this.messages = 'Account created successfully!'
+        }
     }
-
 }
 </script>

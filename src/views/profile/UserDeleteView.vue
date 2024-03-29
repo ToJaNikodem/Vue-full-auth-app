@@ -4,9 +4,7 @@
             <h1 class="text-4xl block mt-5 mb-5">Delete account</h1>
             <span v-show="!isLoading">
                 <form @submit.prevent="submitForm">
-                    <CustomInput label="Password" type="password" dataType="password" :form-data="formData"
-                        :errors="errors">
-                    </CustomInput>
+                    <PasswordInput name="password" label="Password" type="none" :form-data="formData" :errors="errors"></PasswordInput>
                     <div>
                         <span v-if="errorMessages" class=" text-red-600 font-bold mt-2 block">{{ errorMessages }}</span>
                     </div>
@@ -29,7 +27,7 @@
 <script>
 import { mapActions } from 'vuex'
 import LoadingCircle from '@/components/LoadingCircle.vue'
-import CustomInput from '@/components/CustomInput.vue'
+import PasswordInput from '@/components/inputs/PasswordInput.vue'
 
 export default {
     name: 'UserDeleteView',
@@ -43,7 +41,7 @@ export default {
     },
     components: {
         LoadingCircle,
-        CustomInput,
+        PasswordInput,
     },
     methods: {
         ...mapActions(['deleteUser', 'logoutUser']),

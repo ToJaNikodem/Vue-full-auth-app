@@ -1,19 +1,16 @@
 <template>
     <form @submit.prevent="submitForm">
-        <CustomInput label="Username" type="username" dataType="username" :form-data="formData" :errors="username_error">
-        </CustomInput>
-
-        <CustomInput label="Email" type="email" dataType="email" :form-data="formData" :errors="email_error">
-        </CustomInput>
-
-        <CustomInput label="Password" type="signup_password" dataType="password" :form-data="formData" :errors="password_error">
-        </CustomInput>
-
-        <CustomInput label="Confirm password" type="re_password" dataType="password" :form-data="formData" :errors="password_error">
-        </CustomInput>
+        <UsernameEmailInput name="username" label="Username" type="username" :form-data="formData"
+            :errors="username_error"></UsernameEmailInput>
+        <UsernameEmailInput name="email" label="Email" type="email" :form-data="formData" :errors="email_error">
+        </UsernameEmailInput>
+        <PasswordInput name="password" label="Password" type="signup" :form-data="formData" :errors="password_error">
+        </PasswordInput>
+        <PasswordInput name="re_password" label="Confirm password" type="none" :form-data="formData"
+            :errors="password_error"></PasswordInput>
 
         <div>
-            <span v-if="errorMessages" class=" text-red-600 font-bold mt-2 block">{{ errorMessages }}</span>
+            <span v-if="errorMessages" class=" text-red-600 font-bold mt-2 inline-block">{{ errorMessages }}</span>
         </div>
         <div>
             <button class="rounded-md bg-gray-300 text-black w-24 h-10 mt-5 mb-5">Sign up</button>
@@ -27,7 +24,8 @@
 <script>
 import { mapActions } from 'vuex'
 import router from '@/router'
-import CustomInput from './CustomInput.vue'
+import UsernameEmailInput from '@/components/inputs/UsernameEmailInput.vue'
+import PasswordInput from '@/components/inputs/PasswordInput.vue'
 
 export default {
     data() {
@@ -41,7 +39,8 @@ export default {
         }
     },
     components: {
-        CustomInput,
+        UsernameEmailInput,
+        PasswordInput,
     },
     methods: {
         ...mapActions(['signupUser']),
@@ -63,42 +62,14 @@ export default {
                 const response = await this.signupUser({
                     username: myFormData.get('username'),
                     email: myFormData.get('email'),
-                    password: myFormData.get('signup_password'),
+                    password: myFormData.get('password'),
                     re_password: myFormData.get('re_password'),
                 })
                 if (response['status'] == 'success') {
-                    await router.push('login')
+                    await router.push({ name: 'login', query: { loginSuccess: true } })
                 } else {
-                    if (response['username']) {
-                        if (response['username'] == 'not_unique') {
-                            this.errorMessages += "Username already taken!\n"
-                        } else if (response['username'] == 'too_short') {
-                            this.errorMessages += "Username to short!\n"
-                        } else if (response['username'] == 'invalid') {
-                            this.errorMessages += "Invalid username!\n"
-                        }
-                        this.username_error = true
-                    }
-                    if (response['email']) {
-                        if (response['email'] == 'not_unique') {
-                            this.errorMessages += "Email already taken!\n"
-                        } else if (response['email'] == 'invalid') {
-                            this.errorMessages += "Invalid email!\n"
-                        }
-                        this.email_error = true
-                    }
-                    if (response['password']) {
-                        if (response['password'] == 'too_short') {
-                            this.errorMessages += "Password too short!\n"
-                        } else if (response['password'] == 'no_digit') {
-                            this.errorMessages += "Password must include a digit!\n"
-                        } else if (response['password'] == 'no_special') {
-                            this.errorMessages += "Password must include an special character!\n"
-                        } else if (response['password'] == 'no_match') {
-                            this.errorMessages += "Password do not match!\n"
-                        }
-                        this.password_error = true
-                    }
+                    this.errorMessages = this.handleErrorMessages(response)
+
                     this.isLoading = false
                     this.$emit('isLoadingChange', this.isLoading)
                 }
@@ -106,6 +77,38 @@ export default {
                 this.errorMessages = "An error occurred!"
             }
         },
+        handleErrorMessages(response) {
+            let messages = ''
+            if (response['username']) {
+                this.username_error = true
+                switch (response['username'].toString()) {
+                    case 'not_unique': messages += "Username already taken!\n"; break
+                    case 'too_long': messages += "Username too long!\n"; break
+                    case 'too_short': messages += "Username too short!\n"; break
+                    case 'invalid': messages += "Invalid username!\n"; break
+                    default: break
+                }
+            }
+            if (response['email']) {
+                this.email_error = true
+                switch (response['email'].toString()) {
+                    case 'not_unique': messages += "Email already taken!\n"; break
+                    case 'invalid': messages += "Invalid email!\n"; break
+                    case 'too_long': messages += "Email too long!\n"; break
+                    default: break
+                }
+            }
+            if (response['password']) {
+                this.password_error = true
+                switch (response['password'].toString()) {
+                    case 'too_short': messages += "Password to short!\n"; break
+                    case 'too_long': messages += "Password to long!\n"; break
+                    case 'invalid': messages += "Invalid password!\n"; break
+                    default: break
+                }
+            }
+            return messages
+        }
     }
 }
 </script>

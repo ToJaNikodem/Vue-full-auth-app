@@ -1,12 +1,7 @@
 <template>
     <form @submit.prevent="submitForm">
-        <CustomInput label="Username or email" type="username_or_email" dataType="username_or_email"
-            :form-data="formData" :errors="errors">
-        </CustomInput>
-
-        <CustomInput label="Password" type="login_password" dataType="password" :form-data="formData" :errors="errors">
-        </CustomInput>
-
+        <UsernameEmailInput name="username" label="Username" type="username" :form-data="formData" :errors="errors"></UsernameEmailInput>
+        <PasswordInput name="password" label="Password" type="login" :form-data="formData" :errors="errors"></PasswordInput>
         <div>
             <span v-if="errorMessage" class=" text-red-600 font-bold mt-2 block">{{ errorMessage }}</span>
         </div>
@@ -22,7 +17,8 @@
 <script>
 import router from '@/router'
 import { mapActions } from 'vuex'
-import CustomInput from './CustomInput.vue'
+import UsernameEmailInput from '@/components/inputs/UsernameEmailInput.vue'
+import PasswordInput from '@/components/inputs/PasswordInput.vue'
 
 export default {
     data() {
@@ -34,7 +30,8 @@ export default {
         }
     },
     components: {
-        CustomInput,
+        PasswordInput,
+        UsernameEmailInput,
     },
     methods: {
         ...mapActions(['loginUser']),
@@ -52,10 +49,10 @@ export default {
                 })
 
                 const response = await this.loginUser({
-                    username: myFormData.get('username_or_email'),
-                    password: myFormData.get('login_password'),
+                    username: myFormData.get('username'),
+                    password: myFormData.get('password'),
                 })
-                if (response['status'] === 'success') {
+                if (response['status'] == 'success') {
                     await router.push('/')
                 } else {
                     if (response['username_or_email'] == 'invalid') {

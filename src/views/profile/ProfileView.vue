@@ -12,8 +12,10 @@
         <router-link
             class="text-md ml-5 text-white bg-red-600 px-2 py-1 mt-5 rounded-md block font-bold w-64 text-center"
             to="/delete-user">Delete account</router-link>
-        <button class="text-md ml-5 text-white bg-violet-600 px-2 py-1 mt-5 rounded-md block font-bold w-64 text-center"
-            @click="testAccessToken">Test access token</button>
+        <div v-if="messages"
+            class=" bg-green-500 w-96 text-center p-2 rounded-md absolute top-10 left-1/2 -translate-x-1/2">
+            {{ messages }}
+        </div>
     </div>
 </template>
 
@@ -25,6 +27,11 @@ export default {
     name: 'ProfileView',
     computed: {
         ...mapGetters(['isEmailVerified', 'username', 'accessToken'])
+    },
+    data() {
+        return {
+            messages: ''
+        }
     },
     methods: {
         async resendVerificationEmail() {
@@ -42,23 +49,18 @@ export default {
                 console.error("Verification email not sent: ", error)
             }
         },
-
-        async testAccessToken() {
-            try {
-                await axios.get("/token_test", {
-                    headers: {
-                        'Authorization': 'Bearer ' + this.accessToken
-                    }
-                })
-
-                console.log("Access token valid!")
-            } catch (error) {
-                if (error.response && error.response.status === 401) {
-                    this.text = "Invalid access token!"
-                } else {
-                    this.text = "An error occurred!"
-                }
-            }
+        resetMessages() {
+            this.messages = ''
+            this.$router.replace({ query: null })
+        }
+    },
+    mounted() {
+        if (this.$route.query.usernameChangeSuccess) {
+            this.messages = 'Username changed successfully!'
+            setTimeout(this.resetMessages, 3 * 1000)
+        } else if (this.$route.query.passwordChangeSuccess) {
+            this.messages = 'Password changed successfully!'
+            setTimeout(this.resetMessages, 3 * 1000)
         }
     }
 }

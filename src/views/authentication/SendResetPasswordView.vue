@@ -4,9 +4,8 @@
             <h1 class="text-4xl block mt-5 mb-5">Reset password</h1>
             <span v-show="!isLoading">
                 <form @submit.prevent="submitForm">
-                    <CustomInput label="Email" type="email" dataType="email" :form-data="formData"
-                        :errors="email_error">
-                    </CustomInput>
+                    <UsernameEmailInput name="email" label="Email" type="email" :form-data="formData" :errors="errors">
+                    </UsernameEmailInput>
                     <div>
                         <span v-if="errorMessages" class=" text-red-600 font-bold mt-2 block">{{ errorMessages }}</span>
                     </div>
@@ -14,7 +13,6 @@
                         <button class="rounded-md bg-gray-300 text-black w-64 h-10 mt-5 mb-5">Send password reset
                             email</button>
                     </div>
-
                 </form>
             </span>
             <span v-show="isLoading">
@@ -31,7 +29,7 @@
 import LoadingCircle from '@/components/LoadingCircle.vue'
 import axios from 'axios'
 import router from '@/router'
-import CustomInput from '@/components/CustomInput.vue'
+import UsernameEmailInput from '@/components/inputs/UsernameEmailInput.vue'
 
 export default {
     name: 'ResetPasswordView',
@@ -45,7 +43,7 @@ export default {
     },
     components: {
         LoadingCircle,
-        CustomInput,
+        UsernameEmailInput,
     },
     methods: {
         async submitForm() {

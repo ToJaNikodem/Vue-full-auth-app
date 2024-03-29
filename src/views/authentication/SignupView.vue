@@ -2,6 +2,9 @@
     <div class="flex items-center justify-center w-full h-full">
         <div class=" flex flex-col w-1/2 h-1/2 text-center">
             <h1 class=" text-4xl block mt-5 mb-5">Sign up</h1>
+            <span v-if="messages">
+                {{ messages }}
+            </span>
             <span v-show="!isLoading">
                 <SignupForm @isLoadingChange="handleLoadingChange"></SignupForm>
             </span>
