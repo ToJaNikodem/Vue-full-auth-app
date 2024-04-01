@@ -4,7 +4,7 @@
             <h1 class="text-4xl block mt-5 mb-5">Change username</h1>
             <span v-show="!isLoading">
                 <form @submit.prevent="submitForm">
-                    <UsernameEmailInput name="new_nickname" label="New nickname" type="username" :form-data="formData" :errors="errors"></UsernameEmailInput>
+                    <UsernameEmailInput name="new_username" label="New username" type="username" :form-data="formData" :errors="errors"></UsernameEmailInput>
                     <div>
                         <span v-if="errorMessage" class=" text-red-600 font-bold mt-2 block">{{ errors }}</span>
                     </div>
@@ -58,7 +58,7 @@ export default {
                     myFormData.append(key, value)
                 })
 
-                const response = await this.changeUsername({ new_nickname: myFormData.get('new_nickname') })
+                const response = await this.changeUsername({ newUserName: myFormData.get('new_username') })
                 if (response['status'] == 'success') {
                     await router.push({ name: 'profile', query: { usernameChangeSuccess: true } })
                 } else {

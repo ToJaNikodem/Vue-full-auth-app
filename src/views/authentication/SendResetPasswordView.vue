@@ -58,7 +58,7 @@ export default {
                     myFormData.append(key, value)
                 })
 
-                await axios.post('/send_password_reset_email', {
+                await axios.post('/user/send-password-reset-email', {
                     email: myFormData.get('email'),
                 })
 

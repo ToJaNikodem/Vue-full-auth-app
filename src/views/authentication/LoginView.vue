@@ -37,11 +37,17 @@ export default {
     methods: {
         handleLoadingChange(isLoading) {
             this.isLoading = isLoading;
+        },
+        resetMessages() {
+            this.messages = ''
+            this.isMessageError = false
+            this.$router.replace({ query: null })
         }
     },
     mounted() {
         if (this.$route.query.loginSuccess) {
             this.messages = 'Account created successfully!'
+            setTimeout(this.resetMessages, 3 * 1000)
         }
     }
 }

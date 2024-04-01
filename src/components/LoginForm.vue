@@ -49,7 +49,7 @@ export default {
                 })
 
                 const response = await this.loginUser({
-                    username: myFormData.get('username'),
+                    userNameOrEmail: myFormData.get('username'),
                     password: myFormData.get('password'),
                 })
                 if (response['status'] == 'success') {

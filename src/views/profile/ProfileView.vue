@@ -12,8 +12,8 @@
         <router-link
             class="text-md ml-5 text-white bg-red-600 px-2 py-1 mt-5 rounded-md block font-bold w-64 text-center"
             to="/delete-user">Delete account</router-link>
-        <div v-if="messages"
-            class=" bg-green-500 w-96 text-center p-2 rounded-md absolute top-10 left-1/2 -translate-x-1/2">
+        <div v-if="messages" :class="{ 'bg-red-500': isMessageError }"
+            class="bg-green-500 w-96 text-center p-2 rounded-md absolute top-10 left-1/2 -translate-x-1/2">
             {{ messages }}
         </div>
     </div>
@@ -30,27 +30,31 @@ export default {
     },
     data() {
         return {
-            messages: ''
+            messages: '',
+            isMessageError: false
         }
     },
     methods: {
         async resendVerificationEmail() {
             try {
-                await axios.post('/resend_verification_email', {
-                    username: this.username,
+                await axios.post('/user/resend-verification-email', {
+                    userName: this.username,
                 }, {
                     headers: {
                         'Authorization': 'Bearer ' + this.accessToken
                     }
                 })
-
-                console.log("Verification email sent!")
+                this.messages = 'Verification email send!'
+                setTimeout(this.resetMessages, 3 * 1000)
             } catch (error) {
-                console.error("Verification email not sent: ", error)
+                this.messages = 'An error occured when sending email!'
+                this.isMessageError = true
+                setTimeout(this.resetMessages, 3 * 1000)
             }
         },
         resetMessages() {
             this.messages = ''
+            this.isMessageError = false
             this.$router.replace({ query: null })
         }
     },

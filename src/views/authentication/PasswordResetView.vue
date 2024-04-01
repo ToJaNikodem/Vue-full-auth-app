@@ -61,10 +61,10 @@ export default {
                 })
 
                 if (myFormData.get('new_password') === myFormData.get('re_new_password')) {
-                    await axios.post('/password_reset', {
-                        encoded_user_id: uid,
-                        token: token,
-                        new_password: myFormData.get('new_password'),
+                    await axios.post('/user/password-reset', {
+                        encodedUserId: uid,
+                        resetToken: token,
+                        newPassword: myFormData.get('new_password'),
                     })
                     await router.push('/login')
                 } else {
@@ -72,7 +72,7 @@ export default {
                 }
             } catch (error) {
                 this.isLoading = false
-                this.errorMessages = "An error occurred!"
+                this.errorMessages = "An error occurred!" + error
             }
         }
     }

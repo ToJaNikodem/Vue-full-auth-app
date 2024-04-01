@@ -6,21 +6,17 @@ import router from '@/router'
 import Cookies from 'js-cookie'
 
 axios.interceptors.response.use(function (response) {
-    // Do something with response data
     console.log('Response Interceptor:', response);
     return response;
 }, function (error) {
-    // Do something with response error
     console.error('Response Interceptor Error:', error);
     return Promise.reject(error);
 });
 
 axios.interceptors.request.use(function (config) {
-    // Do something before request is sent
     console.log('Request Interceptor:', config);
     return config;
 }, function (error) {
-    // Do something with request error
     console.error('Request Interceptor Error:', error);
     return Promise.reject(error);
 });
@@ -37,9 +33,7 @@ const vuexCookie = new VuexPersistence({
 const store = new Vuex.Store({
     state: {
         user: {
-            id: null,
             username: '',
-            nickname: '',
             accessToken: '',
             refreshToken: '',
             isAuthenticated: false,
@@ -52,11 +46,11 @@ const store = new Vuex.Store({
         },
         clearUser(state) {
             state.user = {
-                id: null,
                 username: '',
                 accessToken: '',
                 refreshToken: '',
-                isAuthenticated: false
+                isAuthenticated: false,
+                isEmailVerified: false,
             }
         },
         setToken(state, { accessToken, refreshToken }) {
@@ -68,24 +62,27 @@ const store = new Vuex.Store({
         },
     },
     actions: {
-        async loginUser({ commit }, { username, password }) {
+        async loginUser({ commit }, { userNameOrEmail, password }) {
             try {
-                const response = await axios.post('/login', {
-                    username: username,
+                const response = await axios.post('/user/login', {
+                    userNameOrEmail: userNameOrEmail,
                     password: password,
                 })
 
                 const userData = response.data
-                const decodedToken = jwtDecode(userData.refresh)
+                const decodedToken = jwtDecode(userData.accessToken)
+
+                let isEmailVerified = false
+                if (decodedToken.email_confirmed == 'True') {
+                    isEmailVerified = true
+                }
 
                 commit('setUser', {
-                    id: decodedToken.user_id,
-                    username: decodedToken.username,
-                    nickname: decodedToken.nickname,
-                    accessToken: userData.access,
-                    refreshToken: userData.refresh,
+                    username: decodedToken.given_name,
+                    accessToken: userData.accessToken,
+                    refreshToken: userData.refreshToken,
                     isAuthenticated: true,
-                    isEmailVerified: decodedToken.is_email_verified,
+                    isEmailVerified: isEmailVerified,
                 })
                 startRefreshTokenInterval()
                 return { 'status': 'success' }
@@ -99,8 +96,13 @@ const store = new Vuex.Store({
         },
         async logoutUser({ commit }) {
             try {
-                await axios.post('/logout', {
-                    refresh: this.state.user.refreshToken
+                await axios.post('/user/logout', {
+                    userName: this.state.user.username,
+                    refreshToken: this.state.user.refreshToken
+                }, {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.state.user.accessToken
+                    }
                 })
                 stopRefreshTokenInterval()
             } catch (error) {
@@ -112,8 +114,8 @@ const store = new Vuex.Store({
         async signupUser({ }, { username, email, password, re_password }) {
             try {
                 if (password === re_password) {
-                    await axios.post('/signup', {
-                        username: username,
+                    await axios.post('/user/signup', {
+                        userName: username,
                         email: email,
                         password: password,
                     })
@@ -131,14 +133,19 @@ const store = new Vuex.Store({
         },
         async refreshToken({ commit, dispatch }) {
             try {
-                const response = await axios.post('/token_refresh', {
-                    refresh: this.state.user.refreshToken
+                const response = await axios.post('/user/refresh', {
+                    userName: this.state.user.username,
+                    refreshToken: this.state.user.refreshToken
+                }, {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.state.user.accessToken
+                    }
                 })
                 const tokenData = response.data
 
                 commit('setToken', {
-                    accessToken: tokenData.access,
-                    refreshToken: tokenData.refresh,
+                    accessToken: tokenData.accessToken,
+                    refreshToken: tokenData.refreshToken, 
                 })
                 return true
             } catch (error) {
@@ -148,10 +155,11 @@ const store = new Vuex.Store({
         },
         async deleteUser({ }, { password }) {
             try {
-                await axios.post('/user_delete', {
-                    username: this.state.user.username,
-                    password,
-                }, {
+                await axios.delete('/user/delete', {
+                    data: {
+                        userName: this.state.user.username,
+                        password: password,
+                    },
                     headers: {
                         'Authorization': 'Bearer ' + this.state.user.accessToken
                     }
@@ -165,17 +173,17 @@ const store = new Vuex.Store({
                 }
             }
         },
-        async changeUsername({ }, { new_nickname }) {
+        async changeUsername({ }, { newUserName }) {
             try {
-                await axios.post('/nickname_change', {
-                    username: this.state.user.username,
-                    new_nickname,
+                await axios.post('/user/username-change', {
+                    oldUserName: this.state.user.username,
+                    newUserName: newUserName,
                 }, {
                     headers: {
                         'Authorization': 'Bearer ' + this.state.user.accessToken
                     }
                 })
-                this.state.user.nickname = new_nickname
+                this.state.user.username = newUserName
                 return { status: 'success' }
             } catch (error) {
                 return { status: 'error', message: 'An error occurred!' }
@@ -183,10 +191,10 @@ const store = new Vuex.Store({
         },
         async changePassword({ }, { old_password, new_password }) {
             try {
-                await axios.post('/password_change', {
-                    username: this.state.user.username,
-                    old_password,
-                    new_password,
+                await axios.post('/user/password-change', {
+                    userName: this.state.user.username,
+                    oldPassword: old_password,
+                    newPassword: new_password,
                 }, {
                     headers: {
                         'Authorization': 'Bearer ' + this.state.user.accessToken
@@ -201,7 +209,6 @@ const store = new Vuex.Store({
     getters: {
         isAuthenticated: state => state.user.isAuthenticated,
         isEmailVerified: state => state.user.isEmailVerified,
-        nickname: state => state.user.nickname,
         username: state => state.user.username,
         accessToken: state => state.user.accessToken,
     },

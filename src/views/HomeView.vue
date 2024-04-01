@@ -1,5 +1,5 @@
 <template>
-    <div class=" m-6 text-5xl"> Welcome <span v-if="nickname != ''"> {{ nickname }}</span><span v-else> {{ username }}</span>!</div>
+    <div class=" m-6 text-5xl"> Welcome {{ username }}!</div>
 </template>
 
 <script>
@@ -8,7 +8,7 @@ import { mapGetters } from 'vuex'
 export default {
     name: 'HomeView',
     computed: {
-        ...mapGetters(['nickname', 'username'])
+        ...mapGetters(['username'])
     },
 }
 </script>
