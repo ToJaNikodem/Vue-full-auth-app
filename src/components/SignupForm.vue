@@ -68,8 +68,7 @@ export default {
                 if (response['status'] == 'success') {
                     await router.push({ name: 'login', query: { loginSuccess: true } })
                 } else {
-                    this.errorMessages = this.handleErrorMessages(response)
-
+                    this.errorMessages = this.handleErrorMessages(response['errors'])
                     this.isLoading = false
                     this.$emit('isLoadingChange', this.isLoading)
                 }
@@ -77,33 +76,28 @@ export default {
                 this.errorMessages = "An error occurred!"
             }
         },
-        handleErrorMessages(response) {
+        handleErrorMessages(errors) {
             let messages = ''
-            if (response['username']) {
+            if (errors['UserName']) {
                 this.username_error = true
-                switch (response['username'].toString()) {
-                    case 'not_unique': messages += "Username already taken!\n"; break
-                    case 'too_long': messages += "Username too long!\n"; break
-                    case 'too_short': messages += "Username too short!\n"; break
-                    case 'invalid': messages += "Invalid username!\n"; break
-                    default: break
-                }
+                messages += errors['UserName']
             }
-            if (response['email']) {
+            if (errors['email']) {
                 this.email_error = true
-                switch (response['email'].toString()) {
+                switch (errors['email'].toString()) {
                     case 'not_unique': messages += "Email already taken!\n"; break
                     case 'invalid': messages += "Invalid email!\n"; break
                     case 'too_long': messages += "Email too long!\n"; break
                     default: break
                 }
             }
-            if (response['password']) {
+            if (errors['password']) {
                 this.password_error = true
-                switch (response['password'].toString()) {
+                switch (errors['password'].toString()) {
                     case 'too_short': messages += "Password to short!\n"; break
                     case 'too_long': messages += "Password to long!\n"; break
                     case 'invalid': messages += "Invalid password!\n"; break
+                    case 'no_match': messages += "Passwords do not match!\n"; break
                     default: break
                 }
             }

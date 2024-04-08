@@ -87,11 +87,7 @@ const store = new Vuex.Store({
                 startRefreshTokenInterval()
                 return { 'status': 'success' }
             } catch (error) {
-                if (error.response && error.response.status === 401) {
-                    return { 'status': 'error', 'username_or_email': 'invalid' }
-                } else {
-                    return { 'status': 'error', 'message': 'An error occurred!' }
-                }
+                return { 'status': 'error' }
             }
         },
         async logoutUser({ commit }) {
@@ -145,7 +141,7 @@ const store = new Vuex.Store({
 
                 commit('setToken', {
                     accessToken: tokenData.accessToken,
-                    refreshToken: tokenData.refreshToken, 
+                    refreshToken: tokenData.refreshToken,
                 })
                 return true
             } catch (error) {

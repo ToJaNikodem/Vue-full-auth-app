@@ -1,7 +1,9 @@
 <template>
     <form @submit.prevent="submitForm">
-        <UsernameEmailInput name="username" label="Username" type="username" :form-data="formData" :errors="errors"></UsernameEmailInput>
-        <PasswordInput name="password" label="Password" type="login" :form-data="formData" :errors="errors"></PasswordInput>
+        <UsernameEmailInput name="username" label="Username" type="username" :form-data="formData" :errors="errors">
+        </UsernameEmailInput>
+        <PasswordInput name="password" label="Password" type="login" :form-data="formData" :errors="errors">
+        </PasswordInput>
         <div>
             <span v-if="errorMessage" class=" text-red-600 font-bold mt-2 block">{{ errorMessage }}</span>
         </div>
@@ -52,20 +54,19 @@ export default {
                     userNameOrEmail: myFormData.get('username'),
                     password: myFormData.get('password'),
                 })
-                if (response['status'] == 'success') {
-                    await router.push('/')
+                if (response['status'] === 'success') {
+                    router.push('/')
                 } else {
-                    if (response['username_or_email'] == 'invalid') {
-                        this.errorMessage += "Invalid username or password!"
-                        this.errors = true
-                    } else {
-                        this.errorMessage += response['message']
-                    }
+                    this.errorMessage += "Invalid username or password!"
+                    this.errors = true
                     this.isLoading = false
                     this.$emit('isLoadingChange', this.isLoading)
                 }
             } catch (error) {
-                this.errorMessage = "An error occurred!"
+                this.errorMessage += "An error occured!"
+                this.errors = true
+                this.isLoading = false
+                this.$emit('isLoadingChange', this.isLoading)
             }
         },
     }
