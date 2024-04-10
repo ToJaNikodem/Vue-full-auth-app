@@ -85,9 +85,9 @@ const store = new Vuex.Store({
                     isEmailVerified: isEmailVerified,
                 })
                 startRefreshTokenInterval()
-                return { 'status': 'success' }
+                return { status: 'success' }
             } catch (error) {
-                return { 'status': 'error' }
+                return { status: 'error' }
             }
         },
         async logoutUser({ commit }) {
@@ -97,7 +97,7 @@ const store = new Vuex.Store({
                     refreshToken: this.state.user.refreshToken
                 }, {
                     headers: {
-                        'Authorization': 'Bearer ' + this.state.user.accessToken
+                        Authorization: 'Bearer ' + this.state.user.accessToken
                     }
                 })
                 stopRefreshTokenInterval()
@@ -115,9 +115,9 @@ const store = new Vuex.Store({
                         email: email,
                         password: password,
                     })
-                    return { 'status': 'success' }
+                    return { status: 'success' }
                 } else {
-                    return { 'status': 'error', 'password': 'no_match' }
+                    return { status: 'error', password: 'no_match' }
                 }
             } catch (error) {
                 if (error.response && error.response.status === 400) {
@@ -134,7 +134,7 @@ const store = new Vuex.Store({
                     refreshToken: this.state.user.refreshToken
                 }, {
                     headers: {
-                        'Authorization': 'Bearer ' + this.state.user.accessToken
+                        Authorization: 'Bearer ' + this.state.user.accessToken
                     }
                 })
                 const tokenData = response.data
@@ -157,7 +157,7 @@ const store = new Vuex.Store({
                         password: password,
                     },
                     headers: {
-                        'Authorization': 'Bearer ' + this.state.user.accessToken
+                        Authorization: 'Bearer ' + this.state.user.accessToken
                     }
                 })
                 return { status: 'success' }
@@ -176,13 +176,17 @@ const store = new Vuex.Store({
                     newUserName: newUserName,
                 }, {
                     headers: {
-                        'Authorization': 'Bearer ' + this.state.user.accessToken
+                        Authorization: 'Bearer ' + this.state.user.accessToken
                     }
                 })
                 this.state.user.username = newUserName
                 return { status: 'success' }
             } catch (error) {
-                return { status: 'error', message: 'An error occurred!' }
+                if (error.response && error.response.status === 400) {
+                    return error.response.data
+                } else {
+                    return { status: 'error' }
+                }
             }
         },
         async changePassword({ }, { old_password, new_password }) {
@@ -193,12 +197,16 @@ const store = new Vuex.Store({
                     newPassword: new_password,
                 }, {
                     headers: {
-                        'Authorization': 'Bearer ' + this.state.user.accessToken
+                        Authorization: 'Bearer ' + this.state.user.accessToken
                     }
                 })
                 return { status: 'success' }
             } catch (error) {
-                return { status: 'error', message: 'An error occurred!' }
+                if (error.response && error.response.status === 400) {
+                    return error.response.data
+                } else {
+                    return { status: 'error' }
+                }
             }
         }
     },

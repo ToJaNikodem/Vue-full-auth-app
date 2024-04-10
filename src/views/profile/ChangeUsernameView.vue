@@ -6,7 +6,7 @@
                 <form @submit.prevent="submitForm">
                     <UsernameEmailInput name="new_username" label="New username" type="username" :form-data="formData" :errors="errors"></UsernameEmailInput>
                     <div>
-                        <span v-if="errorMessage" class=" text-red-600 font-bold mt-2 block">{{ errors }}</span>
+                        <span v-if="errorMessage" class=" text-red-600 font-bold mt-2 block">{{ errorMessage }}</span>
                     </div>
                     <div>
                         <button class="rounded-md bg-gray-300 text-black w-48 h-10 mt-5 mb-5">Change username</button>
@@ -49,7 +49,6 @@ export default {
         async submitForm() {
             try {
                 this.errorMessage = ''
-                this.username_error = false
                 this.isLoading = true
 
                 const myFormData = new FormData()
@@ -63,6 +62,12 @@ export default {
                     await router.push({ name: 'profile', query: { usernameChangeSuccess: true } })
                 } else {
                     this.isLoading = false
+                    this.errors = true
+                    if (response['errors']['newUserName']) {
+                        this.errorMessage = response['errors']['newUserName'][0]
+                    } else {
+                        this.errorMessage = "An error occurred!"
+                    }
                 }
 
             } catch (error) {

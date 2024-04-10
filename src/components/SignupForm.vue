@@ -10,7 +10,7 @@
             :errors="password_error"></PasswordInput>
 
         <div>
-            <span v-if="errorMessages" class=" text-red-600 font-bold mt-2 inline-block">{{ errorMessages }}</span>
+            <span v-if="errorMessage" class=" text-red-600 font-bold mt-2 inline-block">{{ errorMessage }}</span>
         </div>
         <div>
             <button class="rounded-md bg-gray-300 text-black w-24 h-10 mt-5 mb-5">Sign up</button>
@@ -30,7 +30,7 @@ import PasswordInput from '@/components/inputs/PasswordInput.vue'
 export default {
     data() {
         return {
-            errorMessages: '',
+            errorMessage: '',
             username_error: false,
             email_error: false,
             password_error: false,
@@ -46,7 +46,7 @@ export default {
         ...mapActions(['signupUser']),
         async submitForm() {
             try {
-                this.errorMessages = ''
+                this.errorMessage = ''
                 this.isLoading = true
                 this.username_error = false
                 this.email_error = false
@@ -68,38 +68,30 @@ export default {
                 if (response['status'] == 'success') {
                     await router.push({ name: 'login', query: { loginSuccess: true } })
                 } else {
-                    this.errorMessages = this.handleErrorMessages(response['errors'])
+                    this.errorMessage = this.handleErrorMessages(response['errors'])
                     this.isLoading = false
                     this.$emit('isLoadingChange', this.isLoading)
                 }
             } catch (error) {
-                this.errorMessages = "An error occurred!"
+                this.errorMessage = "An error occurred!"
             }
         },
         handleErrorMessages(errors) {
             let messages = ''
-            if (errors['UserName']) {
+            if (errors['userName']) {
                 this.username_error = true
-                messages += errors['UserName']
+                messages += errors['userName']
             }
             if (errors['email']) {
                 this.email_error = true
-                switch (errors['email'].toString()) {
-                    case 'not_unique': messages += "Email already taken!\n"; break
-                    case 'invalid': messages += "Invalid email!\n"; break
-                    case 'too_long': messages += "Email too long!\n"; break
-                    default: break
-                }
+                messages += errors['email']
             }
             if (errors['password']) {
                 this.password_error = true
-                switch (errors['password'].toString()) {
-                    case 'too_short': messages += "Password to short!\n"; break
-                    case 'too_long': messages += "Password to long!\n"; break
-                    case 'invalid': messages += "Invalid password!\n"; break
-                    case 'no_match': messages += "Passwords do not match!\n"; break
-                    default: break
-                }
+                messages += errors['password']
+            }
+            if (messages === '') {
+                messages = "An error occured!"
             }
             return messages
         }
