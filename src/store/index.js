@@ -33,6 +33,7 @@ const vuexCookie = new VuexPersistence({
 const store = new Vuex.Store({
     state: {
         user: {
+            id: '',
             username: '',
             accessToken: '',
             refreshToken: '',
@@ -46,6 +47,7 @@ const store = new Vuex.Store({
         },
         clearUser(state) {
             state.user = {
+                id: '',
                 username: '',
                 accessToken: '',
                 refreshToken: '',
@@ -62,29 +64,32 @@ const store = new Vuex.Store({
         },
     },
     actions: {
-        async loginUser({ commit }, { userNameOrEmail, password }) {
+        async loginUser({ }, { userNameOrEmail, password }) {
             try {
                 const response = await axios.post('/user/login', {
                     userNameOrEmail: userNameOrEmail,
                     password: password,
                 })
 
-                const userData = response.data
-                const decodedToken = jwtDecode(userData.accessToken)
+                const data = response.data
+                const loginToken = data.loginToken
+                const userId = data.userId
 
-                let isEmailVerified = false
-                if (decodedToken.email_confirmed == 'True') {
-                    isEmailVerified = true
-                }
-
-                commit('setUser', {
-                    username: decodedToken.given_name,
-                    accessToken: userData.accessToken,
-                    refreshToken: userData.refreshToken,
-                    isAuthenticated: true,
-                    isEmailVerified: isEmailVerified,
+                return { status: 'success', loginToken: loginToken, userId: userId }
+            } catch (error) {
+                return { status: 'error' }
+            }
+        },
+        async loginUser2Fa({ commit }, { uid, loginToken, code }) {
+            try {
+                const response = await axios.post('/user/login-2fa', {
+                    code: code,
+                    userId: uid,
+                    loginToken: loginToken
                 })
-                startRefreshTokenInterval()
+
+                
+
                 return { status: 'success' }
             } catch (error) {
                 return { status: 'error' }

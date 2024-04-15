@@ -55,7 +55,7 @@ export default {
                     password: myFormData.get('password'),
                 })
                 if (response['status'] === 'success') {
-                    router.push('/')
+                    router.push('/login2fa/' + response['userId'] + '/' + response['loginToken'])
                 } else {
                     this.errorMessage += "Invalid username or password!"
                     this.errors = true

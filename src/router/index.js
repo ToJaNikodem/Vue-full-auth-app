@@ -11,6 +11,7 @@ import ChangePasswordView from '@/views/profile/ChangePasswordView.vue'
 import ResetPasswordView from '@/views/authentication/SendResetPasswordView.vue'
 import PasswordResetView from '@/views/authentication/PasswordResetView.vue'
 import PageNotFound from '@/views/PageNotFound.vue'
+import Login2faView from '@/views/authentication/Login2faView.vue'
 
 const routes = [
     {
@@ -29,6 +30,11 @@ const routes = [
         path: '/login',
         name: 'login',
         component: LoginView,
+    },
+    {
+        path: '/login2fa/:uid/:loginToken',
+        name: 'login2fa',
+        component: Login2faView
     },
     {
         path: '/signup',
