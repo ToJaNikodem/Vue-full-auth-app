@@ -32,7 +32,7 @@ const routes = [
         component: LoginView,
     },
     {
-        path: '/login2fa/:uid/:loginToken',
+        path: '/login2fa/:userId/:loginToken',
         name: 'login2fa',
         component: Login2faView
     },
@@ -48,13 +48,13 @@ const routes = [
         meta: { requiresAuth: true },
     },
     {
-        path: '/verify/:uid/:token',
+        path: '/verify/:userId/:token',
         name: 'email-verification',
         component: EmailVerificationView,
         props: true,
     },
     {
-        path: '/password-reset/:uid/:token',
+        path: '/password-reset/:userId/:token',
         name: 'password-reset',
         component: PasswordResetView,
         props: true,

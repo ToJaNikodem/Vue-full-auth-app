@@ -64,11 +64,11 @@ const store = new Vuex.Store({
                 return { status: 'error' }
             }
         },
-        async loginUser2Fa({ commit }, { uid, loginToken, code }) {
+        async loginUser2Fa({ commit }, { userId, loginToken, code }) {
             try {
                 const response = await axios.post('/user/login-2fa', {
                     code: code,
-                    userId: uid,
+                    userId: userId,
                     loginToken: loginToken
                 })
 
@@ -97,7 +97,7 @@ const store = new Vuex.Store({
         async logoutUser({ commit }) {
             try {
                 await axios.post('/user/logout', {
-                    userName: this.state.user.username,
+                    userId: this.state.user.id,
                     refreshToken: this.state.user.refreshToken
                 }, {
                     headers: {
@@ -106,7 +106,6 @@ const store = new Vuex.Store({
                 })
                 stopRefreshTokenInterval()
             } catch (error) {
-                console.error('Full logout failed!')
             }
             commit('clearUser')
             await router.push('/login')
@@ -134,7 +133,7 @@ const store = new Vuex.Store({
         async refreshToken({ commit, dispatch }) {
             try {
                 const response = await axios.post('/user/refresh', {
-                    userName: this.state.user.username,
+                    userId: this.state.user.id,
                     refreshToken: this.state.user.refreshToken
                 }, {
                     headers: {
@@ -157,7 +156,7 @@ const store = new Vuex.Store({
             try {
                 await axios.delete('/user/delete', {
                     data: {
-                        userName: this.state.user.username,
+                        userId: this.state.user.id,
                         password: password,
                     },
                     headers: {
@@ -176,7 +175,7 @@ const store = new Vuex.Store({
         async changeUsername({ }, { newUserName }) {
             try {
                 await axios.post('/user/username-change', {
-                    oldUserName: this.state.user.username,
+                    userId: this.state.user.id,
                     newUserName: newUserName,
                 }, {
                     headers: {
@@ -196,7 +195,7 @@ const store = new Vuex.Store({
         async changePassword({ }, { old_password, new_password }) {
             try {
                 await axios.post('/user/password-change', {
-                    userName: this.state.user.username,
+                    userId: this.state.user.id,
                     oldPassword: old_password,
                     newPassword: new_password,
                 }, {
@@ -219,6 +218,7 @@ const store = new Vuex.Store({
         isEmailVerified: state => state.user.isEmailVerified,
         username: state => state.user.username,
         accessToken: state => state.user.accessToken,
+        id: state => state.user.id
     },
     plugins: [vuexCookie.plugin]
 })

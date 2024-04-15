@@ -26,7 +26,7 @@ import axios from 'axios'
 export default {
     name: 'ProfileView',
     computed: {
-        ...mapGetters(['isEmailVerified', 'username', 'accessToken'])
+        ...mapGetters(['isEmailVerified', 'id', 'accessToken'])
     },
     data() {
         return {
@@ -38,7 +38,7 @@ export default {
         async resendVerificationEmail() {
             try {
                 await axios.post('/user/resend-verification-email', {
-                    userName: this.username,
+                    userId: this.id,
                 }, {
                     headers: {
                         'Authorization': 'Bearer ' + this.accessToken

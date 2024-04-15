@@ -72,7 +72,6 @@ export default {
                     } else {
                         this.isLoading = false
                         this.new_password_error = true
-                        console.log(response)
                         if (response['errors']['newPassword']) {
                             this.errorMessage = response['errors']['newPassword'][0]
                         } else {

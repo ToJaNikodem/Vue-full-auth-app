@@ -48,6 +48,14 @@ export default {
         if (this.$route.query.loginSuccess) {
             this.messages = 'Account created successfully!'
             setTimeout(this.resetMessages, 3 * 1000)
+        } 
+        if (this.$route.query.passwordEmailtSuccess) {
+            this.messages = 'Password reset email sent successfuly'
+            setTimeout(this.resetMessages, 3 * 1000)
+        }
+        if (this.$route.query.passwordResetSuccess) {
+            this.messages = 'Password reseted successfuly'
+            setTimeout(this.resetMessages, 3 * 1000)
         }
     }
 }

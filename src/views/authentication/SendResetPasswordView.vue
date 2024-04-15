@@ -7,7 +7,7 @@
                     <UsernameEmailInput name="email" label="Email" type="email" :form-data="formData" :errors="errors">
                     </UsernameEmailInput>
                     <div>
-                        <span v-if="errorMessages" class=" text-red-600 font-bold mt-2 block">{{ errorMessages }}</span>
+                        <span v-if="errorMessage" class=" text-red-600 font-bold mt-2 block">{{ errorMessage }}</span>
                     </div>
                     <div>
                         <button class="rounded-md bg-gray-300 text-black w-64 h-10 mt-5 mb-5">Send password reset
@@ -35,7 +35,7 @@ export default {
     name: 'ResetPasswordView',
     data() {
         return {
-            errorMessages: '',
+            errorMessage: '',
             errors: false,
             isLoading: false,
             formData: new FormData(),
@@ -48,7 +48,7 @@ export default {
     methods: {
         async submitForm() {
             try {
-                this.errorMessages = ''
+                this.errorMessage = ''
                 this.errors = false
                 this.isLoading = true
 
@@ -62,10 +62,10 @@ export default {
                     email: myFormData.get('email'),
                 })
 
-                router.push('login')
+                await router.push({ name: 'login', query: { passwordEmailSuccess: true } })
             } catch (error) {
                 this.isLoading = false
-                this.errorMessages = "An error occurred!"
+                this.errorMessage = "An error occurred!"
             }
         }
     }

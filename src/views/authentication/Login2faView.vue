@@ -50,7 +50,7 @@ export default {
                 this.errors = false
                 this.isLoading = true
 
-                const { uid, loginToken }  = this.$route.params
+                const { userId, loginToken }  = this.$route.params
 
                 const myFormData = new FormData()
 
@@ -59,7 +59,7 @@ export default {
                 })
 
                 const response = await this.loginUser2Fa({
-                    uid: uid,
+                    userId: userId,
                     loginToken: loginToken,
                     code: myFormData.get('code') 
                 })

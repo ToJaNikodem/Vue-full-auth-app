@@ -14,18 +14,16 @@ export default {
         }
     },
     mounted() {
-        const { uid, token } = this.$route.params
-        if (uid && token) {
-            this.verifyEmail(uid, token)
+        const { userId, token } = this.$route.params
+        if (userId && token) {
+            this.verifyEmail(userId, token)
         }
     },
     methods: {
-        async verifyEmail(uid, token) {
+        async verifyEmail(userId, token) {
             try {
-                console.log("uid: " + uid)
-                console.log("token: " + token)
                 await axios.post('/user/email-verification', {
-                    encodedUserId: uid,
+                    encodedUserId: userId,
                     verificationToken: token,
                 })
                 this.$store.commit('verifyEmail')
