@@ -5,22 +5,6 @@ import axios from 'axios'
 import router from '@/router'
 import Cookies from 'js-cookie'
 
-axios.interceptors.response.use(function (response) {
-    console.log('Response Interceptor:', response);
-    return response;
-}, function (error) {
-    console.error('Response Interceptor Error:', error);
-    return Promise.reject(error);
-});
-
-axios.interceptors.request.use(function (config) {
-    console.log('Request Interceptor:', config);
-    return config;
-}, function (error) {
-    console.error('Request Interceptor Error:', error);
-    return Promise.reject(error);
-});
-
 const vuexCookie = new VuexPersistence({
     restoreState: (key, storage) => Cookies.getJSON(key),
     saveState: (key, state, storage) =>
@@ -88,7 +72,22 @@ const store = new Vuex.Store({
                     loginToken: loginToken
                 })
 
-                
+                var decodedToken = jwtDecode(response.data.accessToken)
+
+                let isEmailVerified = false
+                if (decodedToken.email_confirmed == 'True') {
+                    isEmailVerified = true
+                }
+
+                commit('setUser', {
+                    id: decodedToken.user_id,
+                    username: decodedToken.given_name,
+                    accessToken: response.data.accessToken,
+                    refreshToken: response.data.refreshToken,
+                    isAuthenticated: true,
+                    isEmailVerified: isEmailVerified,
+                })
+                startRefreshTokenInterval()
 
                 return { status: 'success' }
             } catch (error) {

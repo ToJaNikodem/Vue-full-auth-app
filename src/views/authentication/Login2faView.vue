@@ -27,6 +27,7 @@
 import { mapActions } from 'vuex'
 import TwoFactorAuthenticationCodeInput from '@/components/inputs/TwoFactorAuthenticationCodeInput.vue';
 import LoadingCircle from '@/components/LoadingCircle.vue'
+import router from '@/router';
 
 export default {
     data() {
@@ -47,7 +48,7 @@ export default {
             try {
                 this.errorMessage = ''
                 this.errors = false
-                this.isLoading = false
+                this.isLoading = true
 
                 const { uid, loginToken }  = this.$route.params
 
@@ -63,8 +64,18 @@ export default {
                     code: myFormData.get('code') 
                 })
 
-            } catch {
+                if (response['status'] == 'success') {
+                    router.push('/')
+                } else {
+                    this.errorMessage += "Invalid code!"
+                    this.errors = true
+                    this.isLoading = false
+                }
 
+            } catch (error) {
+                this.errorMessage += "An error occured!"
+                this.errors = true
+                this.isLoading = false
             }
         }
     }
