@@ -1,19 +1,2 @@
-# full-auth-app
-
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Vue.js Full auth app
+Frontend application to work with [ASP.NET-Core-WebApi-FullAuth](https://github.com/ToJaNikodem/ASP.NET-Core-WebApi-FullAuth).
